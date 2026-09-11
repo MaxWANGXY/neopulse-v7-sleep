@@ -1,0 +1,3836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 智慧医疗 BP Draft</title>
+<style>
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#050508; font-family:'Inter',sans-serif; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  #frame { width:1920px; height:1080px; border:0; background:#050508; transition:opacity .35s ease; transform-origin:center center; flex-shrink:0; }
+  #frame.fading { opacity:0; }
+  .nav-dots { position:fixed; right:30px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; z-index:1000; }
+  .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .3s ease; }
+  .dot.active { background:#00E5FF; transform:scale(1.4); box-shadow:0 0 10px rgba(0,229,255,.8); }
+  .page-indicator { position:fixed; left:24px; bottom:20px; color:rgba(255,255,255,.35); font:12px/1 Inter,sans-serif; letter-spacing:1px; z-index:1000; user-select:none; }
+  .tap-zone { position:fixed; top:0; bottom:0; width:22%; z-index:500; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .tap-left  { left:0; }
+  .tap-right { right:0; }
+</style>
+</head>
+<body>
+  <div id="stage"><iframe id="frame" title="NeoPulse Slide"></iframe></div>
+  <div class="tap-zone tap-left"  id="tapLeft"  aria-label="上一页"></div>
+  <div class="tap-zone tap-right" id="tapRight" aria-label="下一页"></div>
+  <div class="nav-dots" id="dots"></div>
+  <div class="page-indicator" id="pageInd">01 / 10</div>
+<template id="page-01" data-label="P01 封面"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse Animated Logo Perfect Sync</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-dark: #050508;
+            --ring-color: rgba(255, 255, 255, 0.3);
+            --track-color: rgba(255, 255, 255, 0.15);
+            --signal-color: #00E5FF;
+            --text-color: #FFFFFF;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            background: radial-gradient(circle at center, #101520 0%, var(--bg-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateY(-7%);
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        /* SVG Sizing */
+        .logo-svg {
+            width: 300px;
+            height: 300px;
+            margin-bottom: 50px;
+            filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.08));
+        }
+
+        /* Outer Circle */
+        .outer-ring {
+            fill: none;
+            stroke: var(--ring-color);
+            stroke-width: 1.5;
+        }
+
+        /* Base Line (Darker) */
+        .base-track {
+            fill: none;
+            stroke: var(--track-color);
+            stroke-width: 2.5;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        /* The Animated Action Potential Line (Traces the path) */
+        .signal-trace {
+            fill: none;
+            stroke: var(--signal-color);
+            stroke-width: 3;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px var(--signal-color));
+            
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            
+            /* Takes exactly 2 seconds to trace, then 1s pause (Total 3s) */
+            animation: trace-line 3s linear infinite;
+        }
+
+        /* Nodes (Dots) Base */
+        .node {
+            fill: var(--bg-dark);
+            stroke: var(--ring-color);
+            stroke-width: 2;
+            transition: all 0.1s;
+        }
+
+        /* Timing delays based on physical path distance (Action Potential geometry).
+           Total Path ≈ 197.3 units. Travel time = 2.0s
+           P1: 0.00s
+           P2(24/197.3): 0.24s
+           P3(75.3/197.3): 0.76s
+           P4(121.0/197.3): 1.23s
+           P5(153.2/197.3): 1.55s
+           P6(197.3/197.3): 2.00s
+        */
+        .node-1 { animation: pulse-node 3s 0.00s infinite; }
+        .node-2 { animation: pulse-node 3s 0.24s infinite; }
+        .node-3 { animation: pulse-node 3s 0.76s infinite; }
+        .node-4 { animation: pulse-node 3s 1.23s infinite; }
+        .node-5 { animation: pulse-node 3s 1.55s infinite; }
+        .node-6 { animation: pulse-node 3s 2.00s infinite; }
+
+        /* Typography */
+        /* Mini Brand Header in Top-Right Corner */
+        .slide-header-brand {
+            position: absolute;
+            top: 45px;
+            right: 45px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .brand-signature-mini {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand-cn-grid-mini {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 22px;
+            line-height: 1.05;
+            font-weight: 900;
+            color: #FFFFFF;
+            letter-spacing: 6px;
+            margin-right: -6px;
+            text-align: center;
+        }
+
+        .brand-divider-mini {
+            font-size: 40px;
+            color: rgba(0, 229, 255, 0.45);
+            font-weight: 200;
+            line-height: 1;
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .brand-en-mini {
+            font-size: 40px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 10px;
+            margin-right: -10px;
+            line-height: 1;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+        .brand-en-mini .neo-blue {
+            color: #00E5FF;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.55);
+        }
+
+        .project-title {
+            margin-top: 0px;
+            max-width: 1500px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-title {
+            font-size: 52px;
+            line-height: 1.28;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            white-space: nowrap;
+        }
+
+        .highlight-word {
+            color: #00E5FF;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.55);
+        }
+
+        .sub-title-action {
+            margin-top: 16px;
+            font-size: 22px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 14px;
+            margin-right: -14px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-tagline {
+            margin-top: 62px;
+            font-size: 30px;
+            line-height: 1.4;
+            font-weight: 500;
+            color: rgba(0, 229, 255, 0.82);
+            letter-spacing: 1px;
+            text-align: center;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+            position: relative;
+            padding-bottom: 18px;
+            z-index: 10;
+        }
+
+        .project-tagline::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 280px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0), rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0));
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+        }
+
+        .slide-meta-tl {
+            position: absolute;
+            top: 42px;
+            left: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 13px;
+            z-index: 10;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            line-height: 1;
+        }
+
+        .competition-name {
+            font-size: 30px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.96);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.72);
+        }
+
+        .competition-lock {
+            font-size: 30px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.96);
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.72);
+        }
+
+        .competition-track-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .competition-track {
+            font-size: 23px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.76);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.68);
+        }
+
+        .competition-separator {
+            font-size: 22px;
+            color: rgba(0, 229, 255, 0.68);
+        }
+
+        .competition-group {
+            font-size: 1em;
+            font-weight: 800;
+            color: #00E5FF;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.34);
+        }
+
+        .contact-info {
+            position: absolute;
+            bottom: 82px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 1.5px;
+            z-index: 10;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            text-align: center;
+            line-height: 1.45;
+            white-space: nowrap;
+        }
+
+        .wechat-qr {
+            position: absolute;
+            right: 70px;
+            bottom: 70px;
+            width: 168px;
+            height: 168px;
+            padding: 8px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 229, 255, 0.32);
+            border-radius: 14px;
+            box-shadow: 0 0 24px rgba(0, 229, 255, 0.10);
+            z-index: 10;
+        }
+
+        .wechat-qr img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* PDF/PPT 导出脚本以 1440×810 直接渲染封面；下移联系人，避免与标语装饰线相碰。 */
+        @media (max-width: 1600px) {
+            .contact-info {
+                bottom: 38px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .project-title {
+                font-size: 32px;
+            }
+
+            .project-tagline {
+                font-size: 25px;
+            }
+        }
+
+        /* Keyframes */
+        @keyframes trace-line {
+            0% {
+                stroke-dashoffset: 100;
+                opacity: 1;
+            }
+            66.66% { /* At 2.0s (out of 3s) */
+                stroke-dashoffset: 0;
+                opacity: 1;
+            }
+            80% {
+                stroke-dashoffset: 0;
+                opacity: 0;
+            }
+            100% {
+                stroke-dashoffset: 100;
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse-node {
+            0%, 50%, 100% {
+                fill: var(--bg-dark);
+                stroke: var(--ring-color);
+                stroke-width: 2;
+                transform: scale(1);
+                filter: none;
+            }
+            5%, 15% { /* Instantly pulses when signal hits it */
+                fill: #FFF;
+                stroke: var(--signal-color);
+                stroke-width: 3;
+                transform: scale(1.4);
+                filter: drop-shadow(0 0 12px var(--signal-color));
+            }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <div class="slide-header-brand">
+        <div class="brand-signature-mini">
+            <div class="brand-cn-grid-mini">
+                <span>意脉</span>
+                <span>科技</span>
+            </div>
+            <div class="brand-divider-mini">|</div>
+            <div class="brand-en-mini"><span class="neo-blue">NEO</span>PULSE</div>
+        </div>
+    </div>
+
+    <div class="logo-container">
+        <!-- SVG Graphic -->
+        <svg viewBox="0 0 200 200" class="logo-svg">
+            <!-- 1. Outer Circle -->
+            <circle cx="100" cy="100" r="92" class="outer-ring" />
+
+            <!-- 2. Base Action Potential Track (per brand spec mark_dark.svg, scaled ×2) -->
+            <polyline class="base-track" points="37.6,116 61.6,116 79.6,68 102.4,107.6 124,131.6 162.4,110" />
+
+            <!-- 3. Animated Signal Line (drawing forward) -->
+            <polyline class="signal-trace" points="37.6,116 61.6,116 79.6,68 102.4,107.6 124,131.6 162.4,110" pathLength="100" />
+
+            <!-- 4. Nodes (Dots) - Synced to new arc lengths -->
+            <circle cx="37.6"  cy="116"   r="4" class="node node-1" style="transform-origin: 37.6px 116px;" />
+            <circle cx="61.6"  cy="116"   r="4" class="node node-2" style="transform-origin: 61.6px 116px;" />
+            <circle cx="79.6"  cy="68"    r="4.6" class="node node-3" style="transform-origin: 79.6px 68px;" />
+            <circle cx="102.4" cy="107.6" r="4" class="node node-4" style="transform-origin: 102.4px 107.6px;" />
+            <circle cx="124"   cy="131.6" r="4" class="node node-5" style="transform-origin: 124px 131.6px;" />
+            <circle cx="162.4" cy="110"   r="4" class="node node-6" style="transform-origin: 162.4px 110px;" />
+        </svg>
+
+        <div class="project-title">
+            <div class="main-title">面向<span class="highlight-word">智慧医疗</span>的便携脑机设备与脑状态智能解码平台</div>
+        </div>
+        <div class="project-tagline">用脑状态感知前移客观评估，让睡眠、认知与意识都能被看见</div>
+    </div>
+
+    <div class="contact-info">
+        联系人：王小宇<br>
+        18604158737（微信同步）
+    </div>
+
+    <div class="wechat-qr">
+        <img src="shared/media/页面_王小宇微信二维码_纯二维码_1b942cea.png" alt="王小宇微信二维码">
+    </div>
+
+</body>
+</html>
+</template>
+<template id="page-02" data-label="P02 一夜睡眠结构" data-build-limit="5" data-standard-chrome="true"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 一夜睡眠结构</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+:root{--bg:#050508;--cyan:#00E5FF;--blue:#4EA8DB;--red:#FF625C;--orange:#FF8A3D;--text:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans SC',sans-serif;overflow:hidden}
+.slide-canvas{position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;padding:28px 42px 18px;border:1px solid rgba(255,255,255,.055);background:radial-gradient(ellipse at 75% 7%,rgba(0,229,255,.08),transparent 39%),radial-gradient(ellipse at 10% 92%,rgba(255,98,92,.05),transparent 34%),linear-gradient(145deg,#07101D 0%,#050508 64%,#060B12 100%);box-shadow:0 40px 100px -20px rgba(0,0,0,.88);overflow:hidden;display:flex;flex-direction:column}
+.slide-canvas::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.020) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(180deg,rgba(0,0,0,.64),transparent 76%);pointer-events:none}
+.top-logo{width:218px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:2;padding-right:235px;margin-bottom:8px;flex-shrink:0}
+.header h1{font-size:38px;font-weight:900;line-height:1.15}
+.header h1 strong{color:var(--cyan)}
+.header .sub{margin-top:8px;color:rgba(255,255,255,.62);font-size:16px;font-weight:700}
+.header-note{position:absolute;right:235px;display:none;padding:6px 12px;border-radius:8px;font-size:16px;font-weight:800;letter-spacing:.3px;white-space:nowrap}
+.header-note.onset{top:46px;border:1px solid rgba(255,180,0,.46);background:rgba(36,22,8,.92);color:#FFD0AD}
+.header-note.onset b{color:#FFB000}
+.header-note.deep{top:46px;border:1px solid rgba(0,229,255,.40);background:rgba(8,28,36,.92);color:#CFFBFF}
+.header-note.deep b{color:#00E5FF}
+.stage{position:relative;z-index:2;flex:1;min-height:0;border:1px solid rgba(0,229,255,.22);border-radius:16px;background:linear-gradient(160deg,rgba(13,26,42,.94),rgba(6,12,21,.97));padding:18px 22px 16px;display:flex;flex-direction:column}
+.sleep-cycle{position:relative;flex:1;min-height:0}
+.sleep-cycle svg{position:absolute;inset:0;width:100%;height:100%}
+.cycle-grid{stroke:rgba(255,255,255,.08);stroke-width:1}.cycle-bound{stroke:rgba(0,229,255,.22);stroke-dasharray:5 6}
+.time-axis{stroke:rgba(255,255,255,.28);stroke-width:1.4}
+.time-tick{stroke:rgba(255,255,255,.34);stroke-width:1.4}
+.cycle-line{fill:none;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset .9s ease,opacity .2s linear}
+.cycle-line.base{stroke:rgba(255,255,255,.42);stroke-width:2.4;filter:none}
+.cycle-line.after{stroke:#00E5FF;stroke-width:3.4;filter:drop-shadow(0 0 10px rgba(0,229,255,.55))}
+.cyc-band{stroke:none;opacity:0;transition:opacity .4s ease}
+.cyc-band.onset{fill:url(#onsetFill)}
+.cyc-band.deep{fill:url(#deepFill)}
+.cyc-band.stable{fill:url(#stableFill)}
+.cyc-edge{stroke:rgba(255,176,0,.72);stroke-width:1.6;stroke-dasharray:5 6;opacity:0;transition:opacity .4s ease}
+.cyc-edge.deep{stroke:rgba(0,229,255,.62)}
+.cyc-edge.stable{stroke:rgba(255,138,61,.70)}
+.cycle-line.after-deep,.cycle-line.after-stable{stroke:#00E5FF;stroke-width:3.4;filter:drop-shadow(0 0 10px rgba(0,229,255,.55))}
+.osa-band{position:absolute;left:11.8%;right:6.5%;top:4px;height:34px;display:none;align-items:center;justify-content:center;border-radius:8px;border:1px solid rgba(255,98,92,.50);background:linear-gradient(90deg,rgba(255,98,92,.22),rgba(255,138,61,.16) 55%,rgba(255,98,92,.20));box-shadow:0 0 18px rgba(255,98,92,.18);color:#FFD0D0;font-size:18px;font-weight:900;letter-spacing:.8px;z-index:4;pointer-events:none}
+.osa-band b{color:#FF8B86;font-weight:900}
+.cycle-label{position:absolute;left:0;width:112px;text-align:right;padding-right:10px;color:rgba(255,255,255,.78);font-size:20px;font-weight:800;letter-spacing:.3px;opacity:1;transform:none;white-space:nowrap}
+.cycle-label.wake{top:7%}
+.cycle-label.rem{top:24%}
+.cycle-label.n1{top:41%}
+.cycle-label.n2{top:58%}
+.cycle-label.n3{top:78%}
+.hours{position:absolute;left:0;right:0;bottom:4px;height:28px;color:rgba(255,255,255,.62);font-size:15px;font-weight:800}.hours .t{position:absolute;transform:translateX(-50%);white-space:nowrap}.hours .t0{left:11.8%}.hours .t1{left:53.4%}.hours .t2{left:93.5%}.cycle-span{position:absolute;bottom:30px;text-align:center;color:rgba(0,229,255,.72);font-size:13px;font-weight:800;letter-spacing:.3px;pointer-events:none}.cycle-span.s1{left:12.5%;width:38%}.cycle-span.s2{left:54%;width:37%}
+.callout{position:absolute;z-index:3;display:none;padding:7px 12px;border-radius:8px;font-size:18px;font-weight:800;letter-spacing:.3px;white-space:nowrap}
+.callout b{display:block}
+.callout span{display:none}
+.c1{left:17%;top:8%;border:1px solid rgba(255,180,0,.46);background:rgba(36,22,8,.92);color:#FFD0AD}
+.c1 b{color:#FFB000}
+.c2{left:36%;top:48%;border:1px solid rgba(0,229,255,.40);background:rgba(8,28,36,.92);color:#CFFBFF}
+.c2 b{color:#00E5FF}
+.c3{left:62%;top:8%;border:1px solid rgba(255,138,61,.46);background:rgba(36,20,10,.92);color:#FFD0AD}
+.c3 b{color:#FF8A3D}
+body.build-1 .cycle-line.base,body.build-2 .cycle-line.base,body.build-3 .cycle-line.base,body.build-4 .cycle-line.base,body.build-5 .cycle-line.base{opacity:1;stroke-dashoffset:0}
+body.build-2 .osa-band,body.build-3 .osa-band,body.build-4 .osa-band,body.build-5 .osa-band{display:flex}
+body.build-3 .cycle-line.after,body.build-4 .cycle-line.after,body.build-5 .cycle-line.after{opacity:1;stroke-dashoffset:0}
+body.build-3 .cyc-band.onset,body.build-3 .cyc-edge.onset,body.build-4 .cyc-band.onset,body.build-4 .cyc-edge.onset,body.build-5 .cyc-band.onset,body.build-5 .cyc-edge.onset{opacity:1}
+body.build-4 .cycle-line.after-deep,body.build-5 .cycle-line.after-deep{opacity:1;stroke-dashoffset:0}
+body.build-4 .cyc-band.deep,body.build-4 .cyc-edge.deep,body.build-5 .cyc-band.deep,body.build-5 .cyc-edge.deep{opacity:1}
+body.build-5 .cycle-line.after-stable{opacity:1;stroke-dashoffset:0}
+body.build-5 .cyc-band.stable,body.build-5 .cyc-edge.stable{opacity:1}
+body.build-3 .callout.c1,body.build-4 .callout.c1,body.build-5 .callout.c1{display:block}
+body.build-4 .callout.c2,body.build-5 .callout.c2{display:block}
+body.build-5 .callout.c3{display:block}
+.note{position:relative;z-index:2;margin-top:8px;flex:none;flex-shrink:0;color:rgba(255,255,255,.42);font-size:12px;font-weight:700}
+.conclusion{position:relative;z-index:2;margin-top:8px;flex:none;flex-shrink:0;min-height:52px;border-left:4px solid var(--cyan);border-radius:12px;background:linear-gradient(90deg,rgba(0,229,255,.16),rgba(0,229,255,.04));padding:10px 16px;display:flex;align-items:center;gap:16px;opacity:1;visibility:visible;transform:none}
+.conclusion .eyebrow{flex:none;border-right:1px solid rgba(0,229,255,.28);padding-right:16px;color:var(--cyan);font-size:22px;font-weight:900;white-space:nowrap}
+.conclusion p{font-size:20px;line-height:1.28;font-weight:900}
+.conclusion mark{background:rgba(0,229,255,.18);color:#CFFBFF;border:1px solid rgba(0,229,255,.28);border-radius:6px;padding:1px 6px}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body class="build-0">
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+  <header class="header">
+    <h1>睡眠时相图：<strong>看似平静，其实一夜都在切换</strong></h1>
+
+  </header>
+  <section class="stage">
+    <div class="sleep-cycle">
+      <svg viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="onsetFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFB000" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#FF8A3D" stop-opacity=".08"/>
+          </linearGradient>
+          <linearGradient id="deepFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00E5FF" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#00E5FF" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="stableFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF8A3D" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#FF8A3D" stop-opacity=".07"/>
+          </linearGradient>
+        </defs>
+        <line class="cycle-grid" x1="108" y1="36" x2="960" y2="36"/>
+        <line class="cycle-grid" x1="108" y1="96" x2="960" y2="96"/>
+        <line class="cycle-grid" x1="108" y1="156" x2="960" y2="156"/>
+        <line class="cycle-grid" x1="108" y1="216" x2="960" y2="216"/>
+        <line class="cycle-grid" x1="108" y1="292" x2="960" y2="292"/>
+        <line class="cycle-grid" x1="108" y1="28" x2="108" y2="308"/>
+        <line class="cycle-grid cycle-bound" x1="118" y1="28" x2="118" y2="308"/>
+        <line class="cycle-grid cycle-bound" x1="534" y1="28" x2="534" y2="308"/>
+        <line class="cycle-grid cycle-bound" x1="940" y1="28" x2="940" y2="308"/>
+        <line class="time-axis" x1="108" y1="318" x2="960" y2="318"/>
+        <line class="time-tick" x1="118" y1="312" x2="118" y2="326"/>
+        <line class="time-tick" x1="534" y1="312" x2="534" y2="326"/>
+        <line class="time-tick" x1="940" y1="312" x2="940" y2="326"/>
+        <rect class="cyc-band onset" x="138" y="28" width="106" height="280"/>
+        <line class="cyc-edge onset" x1="138" y1="28" x2="138" y2="308"/>
+        <line class="cyc-edge onset" x1="244" y1="28" x2="244" y2="308"/>
+        <rect class="cyc-band deep" x="244" y="216" width="290" height="92"/>
+        <line class="cyc-edge deep" x1="244" y1="216" x2="244" y2="308"/>
+        <line class="cyc-edge deep" x1="534" y1="216" x2="534" y2="308"/>
+        <path class="cycle-line base" pathLength="1" d="M118 36 H244 V156 H300 V216 H347 V271 H406 V216 H466 V156 H505 V216 H604 V36 H659 V156 H707 V216 H802 V254 H940"/>
+        <path class="cycle-line after" pathLength="1" d="M118 36 H138 V96 H158 V156 H188 V216 H244"/>
+        <rect class="cyc-band stable" x="534" y="28" width="406" height="280"/>
+        <line class="cyc-edge stable" x1="534" y1="28" x2="534" y2="308"/>
+        <line class="cyc-edge stable" x1="940" y1="28" x2="940" y2="308"/>
+        <path class="cycle-line after-deep" pathLength="1" d="M244 216 V292 H534"/>
+        <path class="cycle-line after-stable" pathLength="1" d="M534 292 V216 H590 V96 H673 V156 H697 V216 H749 V292 H940"/>
+      </svg>
+      <div class="cycle-label wake">清醒</div>
+      <div class="cycle-label rem">REM｜做梦</div>
+      <div class="cycle-label n1">N1 入睡</div>
+      <div class="cycle-label n2">N2 浅睡</div>
+      <div class="cycle-label n3">N3 深睡</div>
+      <div class="osa-band"><b>阻塞性睡眠呼吸暂停</b></div>
+      <div class="hours">
+        <span class="t t0">23:00 熄灯</span>
+        <span class="t t1">00:30</span>
+        <span class="t t2">02:00</span>
+      </div>
+      <div class="cycle-span s1">周期 1 · 约 90 分钟</div>
+      <div class="cycle-span s2">周期 2 · 约 90 分钟</div>
+      <div class="callout c1"><b>快速入睡</b></div>
+      <div class="callout c2"><b>深睡延长</b></div>
+      <div class="callout c3"><b>结构稳定</b></div>
+    </div>
+  </section>
+  
+  
+</div>
+<script>window.__BUILD_LIMIT=5;</script>
+<script>
+  const setBuild = step => {
+    const safe = Math.max(0, Math.min(window.__BUILD_LIMIT || 0, Number(step) || 0));
+    document.body.className = 'build-' + safe;
+  };
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight','ArrowLeft',' ','PageDown','PageUp'].includes(event.key)) {
+      event.preventDefault();
+      parent.postMessage({type:'nav_keydown',key:event.key},'*');
+    }
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    parent.postMessage({type:'nav_wheel',deltaY:event.deltaY},'*');
+  },{passive:true});
+</script>
+</body>
+</html>
+</template>
+<template id="page-03" data-label="P03 院外脑电缺口与付费逻辑" data-build-limit="4" data-standard-chrome="true"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 睡眠发生在家里</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+:root{--bg:#050508;--panel:#081321;--panel2:#0B1726;--cyan:#00E5FF;--blue:#4EA8DB;--red:#FF625C;--orange:#FF8A3D;--green:#7EE787;--text:#FFF;--muted:rgba(255,255,255,.66);--line:rgba(255,255,255,.10)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans SC',sans-serif;overflow:hidden}
+.slide-canvas{position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;padding:32px 42px 24px;border:1px solid rgba(255,255,255,.055);border-radius:0;background:radial-gradient(ellipse at 75% 7%,rgba(0,229,255,.08),transparent 39%),radial-gradient(ellipse at 10% 92%,rgba(255,98,92,.055),transparent 34%),linear-gradient(145deg,#07101D 0%,#050508 64%,#060B12 100%);box-shadow:0 40px 100px -20px rgba(0,0,0,.88);overflow:hidden;display:flex;flex-direction:column}
+.slide-canvas::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.020) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(180deg,rgba(0,0,0,.64),transparent 76%);pointer-events:none}
+.top-logo{width:218px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:2;padding-right:235px;margin-bottom:14px;flex-shrink:0}
+.header h1{max-width:1100px;font-size:42px;font-weight:900;line-height:1.1;letter-spacing:.1px;text-shadow:0 8px 26px rgba(0,0,0,.36)}
+.header h1 strong{color:var(--cyan);font-weight:900}
+.header h1 em{font-style:normal;color:var(--red)}
+.hero{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column}
+.track{position:relative;z-index:2;flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.zone{position:relative;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:linear-gradient(160deg,rgba(10,24,40,.78),rgba(6,14,24,.90));overflow:hidden;display:flex;flex-direction:column}
+.zone .stat{position:absolute;right:14px;bottom:10px;z-index:3;text-align:right;pointer-events:none}
+.zone .stat b{display:block;color:#fff;font-size:26px;line-height:1;font-weight:900;letter-spacing:.2px}
+.zone .stat span{display:block;margin-top:3px;color:rgba(255,255,255,.72);font-size:13px;line-height:1.15;font-weight:800}
+.zone:nth-child(1) .stat b{color:#FF8B86}
+.zone:nth-child(3) .stat b{color:#7AF3FF}
+.zone:nth-child(1),.zone:nth-child(3),.values,.conclusion{opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .42s ease,transform .42s ease,visibility 0s linear .42s}
+.zone .copy{position:relative;padding:14px 16px 12px;display:flex;flex-direction:column;flex:none;min-height:108px}
+.zone .visual{flex:1;min-height:0;overflow:hidden;background:#071018}
+.zone .visual img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;filter:saturate(.92) contrast(1.05)}
+.zone:nth-child(1) .visual img{object-position:center 46%;filter:saturate(.92) contrast(1.06) brightness(.96)}
+.zone::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%;background:var(--red)}
+.zone:nth-child(2)::before{background:var(--orange)}
+.zone:nth-child(3)::before{background:var(--cyan)}
+.zone .copy h2{font-size:24px;line-height:1.28;font-weight:900;margin-bottom:10px}
+.zone .copy h2 .tag{color:var(--red);font-weight:900}
+.zone:nth-child(2) .tag{color:var(--orange)}
+.zone:nth-child(3) .tag{color:var(--cyan)}
+.zone .copy p{color:rgba(255,255,255,.82);font-size:20px;line-height:1.4;font-weight:700;padding-right:118px}
+.values{position:relative;z-index:2;margin-top:12px;flex-shrink:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.value{position:relative;overflow:hidden;border:1px solid rgba(255,138,61,.27);border-radius:12px;background:linear-gradient(145deg,rgba(10,29,45,.93),rgba(6,16,28,.88));padding:8px 10px;display:flex;align-items:center;justify-content:center;min-height:58px}
+.value::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:var(--orange);box-shadow:0 0 14px rgba(255,138,61,.32)}
+.value:nth-child(2){border-color:rgba(0,229,255,.24)}
+.value:nth-child(2)::before{background:var(--cyan);box-shadow:0 0 14px rgba(0,229,255,.32)}
+.value:nth-child(3){border-color:rgba(78,168,219,.28)}
+.value:nth-child(3)::before{background:var(--blue)}
+.value b,.value span{display:inline;margin:0;color:#fff;font-size:21px;font-weight:900;line-height:1.12;white-space:nowrap}
+.value i{margin:0 2px;color:rgba(255,255,255,.38);font-size:20px;font-style:normal;font-weight:700}
+.value:nth-child(1) span{color:#FFD0AD}
+.value:nth-child(2) span{color:#9CF5FF}
+.value:nth-child(3) span{color:#CBE8FF}
+.conclusion{position:relative;top:6px;z-index:2;margin-top:auto;flex-shrink:0;border-left:4px solid var(--cyan);border-radius:12px;background:linear-gradient(90deg,rgba(0,229,255,.16),rgba(0,229,255,.04));padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:16px}
+.conclusion .eyebrow{flex:none;border-right:1px solid rgba(0,229,255,.28);padding-right:16px;color:var(--cyan);font-size:24px;font-weight:900;letter-spacing:.8px;white-space:nowrap}
+.conclusion p{font-size:24px;line-height:1.28;font-weight:900}
+.conclusion mark{background:rgba(0,229,255,.18);color:#CFFBFF;border:1px solid rgba(0,229,255,.28);border-radius:6px;padding:1px 6px}
+body.build-1 .zone:nth-child(1),
+body.build-2 .zone:nth-child(1),
+body.build-3 .zone:nth-child(1),
+body.build-4 .zone:nth-child(1){opacity:1;visibility:visible;transform:none}
+body.build-2 .zone:nth-child(3),
+body.build-3 .zone:nth-child(3),
+body.build-4 .zone:nth-child(3){opacity:1;visibility:visible;transform:none}
+body.build-3 .values,
+body.build-4 .values{opacity:1;visibility:visible;transform:none}
+body.build-4 .conclusion{opacity:1;visibility:visible;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;transition-delay:0s!important}}
+</style>
+</head>
+<body class="build-0">
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+  <header class="header"><h1>睡眠发生在家里，客观脑电却停在<em>实验室</em></h1></header>
+<section class="hero">
+  <div class="track">
+    <article class="zone">
+      <div class="copy">
+        <h2><span class="tag">筛查前</span>：家里只有问卷和手环</h2>
+        <p>看得见睡没睡，看不见结构。</p>
+        <div class="stat"><b>1.75 亿</b><span>高风险人群</span></div>
+      </div>
+      <div class="visual"><img src="shared/media/示意图_睡眠缺口_问卷手环_20260910.png" alt="家里只有问卷和手环，缺少客观脑电"></div>
+    </article>
+    <article class="zone">
+      <div class="copy">
+        <h2><span class="tag">确诊时</span>：PSG 准，走不出医院</h2>
+        <p>看得见一晚，看不见每天。</p>
+      </div>
+      <div class="visual"><img src="shared/media/示意图_睡眠缺口_院内PSG单夜_9e506ce2.png" alt="院内多导睡眠监测只能覆盖单夜"></div>
+    </article>
+    <article class="zone">
+      <div class="copy">
+        <h2><span class="tag">治疗后</span>：机器只知道用了多久</h2>
+        <p>看得见小时数，看不见恢复。</p>
+        <div class="stat"><b>&lt;50%</b><span>依从性</span></div>
+      </div>
+      <div class="visual"><img src="shared/media/示意图_睡眠缺口_治疗后CPAP小时数_03023bd4.png" alt="治疗后只知道设备使用小时数"></div>
+    </article>
+  </div>
+</section>
+<section class="values">
+  <div class="value"><b>缺口</b><i>｜</i><span>院外没有客观脑电</span></div>
+  <div class="value"><b>买方</b><i>｜</i><span>睡眠中心、药企、C 端</span></div>
+  <div class="value"><b>付费</b><i>｜</i><span>院外监测-调控的闭环干预手段</span></div>
+</section>
+<div class="conclusion"><span class="eyebrow">赛道判断</span><p>不是再做一只手环，而是<mark>居家测准结构，再把睡眠调香</mark></p></div>
+</div>
+<script>window.__BUILD_LIMIT=4;</script>
+<script>
+  const setBuild = step => {
+    const safe = Math.max(0, Math.min(window.__BUILD_LIMIT || 0, Number(step) || 0));
+    document.body.className = 'build-' + safe;
+  };
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight','ArrowLeft',' ','PageDown','PageUp'].includes(event.key)) {
+      event.preventDefault();
+      parent.postMessage({type:'nav_keydown',key:event.key},'*');
+    }
+  });
+  window.addEventListener('click', () => {
+    parent.postMessage({type:'nav_keydown',key:'ArrowRight'},'*');
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    parent.postMessage({type:'nav_wheel',deltaY:event.deltaY},'*');
+  },{passive:true});
+</script>
+</body>
+</html></template>
+<template id="page-04" data-label="P04 额区少通道与发际线下布点" data-build-limit="2" data-standard-chrome="true"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 科学靶点遴选</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+:root{--bg:#050508;--cyan:#00E5FF;--red:#FF625C;--orange:#FF8A3D;--text:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans SC',sans-serif;overflow:hidden}
+.slide-canvas{position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;padding:28px 42px 22px;border:1px solid rgba(255,255,255,.055);background:radial-gradient(ellipse at 75% 7%,rgba(0,229,255,.08),transparent 39%),radial-gradient(ellipse at 10% 92%,rgba(255,98,92,.05),transparent 34%),linear-gradient(145deg,#07101D 0%,#050508 64%,#060B12 100%);box-shadow:0 40px 100px -20px rgba(0,0,0,.88);overflow:hidden;display:flex;flex-direction:column}
+.slide-canvas::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.020) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(180deg,rgba(0,0,0,.64),transparent 76%);pointer-events:none}
+.top-logo{width:218px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:2;padding-right:235px;margin-bottom:12px;flex-shrink:0}
+.header h1{font-size:38px;font-weight:900;line-height:1.12}
+.header h1 strong{color:var(--cyan)}
+.stage{position:relative;z-index:2;flex:1;min-height:0;border:1px solid rgba(0,229,255,.22);border-radius:16px;overflow:hidden;background:#071018}
+.stage img{width:100%;height:100%;object-fit:cover;object-position:center 38%;display:block}
+.caption{position:absolute;left:18px;bottom:16px;z-index:3;max-width:640px;padding:10px 14px;border-radius:10px;border:1px solid rgba(0,229,255,.28);background:rgba(6,14,24,.82);color:#CFFBFF;font-size:18px;font-weight:800;letter-spacing:.2px}
+.rails{position:relative;z-index:2;margin-top:12px;flex:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rail{min-height:64px;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:14px}
+.rail b{flex:none;width:52px;font-size:15px;font-weight:900;letter-spacing:.4px;white-space:nowrap}
+.rail span{font-size:18px;line-height:1.35;font-weight:800}
+.rail.compare{border:1px solid rgba(255,98,92,.32);background:linear-gradient(90deg,rgba(255,98,92,.14),rgba(8,16,28,.88));}
+.rail.compare b{color:#FF8B86}
+.rail.compare span{color:#FFD0D0}
+.rail.proof{border:1px solid rgba(0,229,255,.32);background:linear-gradient(90deg,rgba(0,229,255,.12),rgba(8,16,28,.88));}
+.rail.proof b{color:#00E5FF}
+.rail.proof span{color:#CFFBFF}
+.rail em{font-style:normal;color:#fff}
+.stage,.rails{opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .42s ease,transform .42s ease,visibility 0s linear .42s}
+body.build-1 .stage,body.build-2 .stage{opacity:1;visibility:visible;transform:none}
+body.build-2 .rails{opacity:1;visibility:visible;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;transition-delay:0s!important}}
+</style>
+</head>
+<body class="build-0">
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+  <header class="header"><h1>科学靶点遴选，赋能<strong>精准监测</strong></h1></header>
+  <section class="stage">
+    <img src="shared/media/示意图_睡眠位点_发际下FpAF阵列_1184f998.png" alt="发带 Fp1/Fpz/Fp2，发际下 AF3/AFz/AF4">
+    <div class="caption">发际线下 · 无发区 · AF 区</div>
+  </section>
+  <section class="rails">
+    <div class="rail compare"><b>对比</b><span>额贴过夜漂移、戴不稳；PSG 准确，但离不开医院。</span></div>
+    <div class="rail proof"><b>精度</b><span>自主研发 AF 区解决方案，与全脑 PSG 对照精度达 <em>88%–92%</em>。</span></div>
+  </section>
+</div>
+<script>window.__BUILD_LIMIT=2;</script>
+<script>
+  const setBuild = step => {
+    const safe = Math.max(0, Math.min(window.__BUILD_LIMIT || 0, Number(step) || 0));
+    document.body.className = 'build-' + safe;
+  };
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight','ArrowLeft',' ','PageDown','PageUp'].includes(event.key)) {
+      event.preventDefault();
+      parent.postMessage({type:'nav_keydown',key:event.key},'*');
+    }
+  });
+  window.addEventListener('click', () => {
+    parent.postMessage({type:'nav_keydown',key:'ArrowRight'},'*');
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    parent.postMessage({type:'nav_wheel',deltaY:event.deltaY},'*');
+  },{passive:true});
+</script>
+</body>
+</html></template>
+<template id="page-05" data-label="P05 设备 · EEGFlow · 结构 · 问诊" data-build-limit="4" data-standard-chrome="true"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 从设备到问诊</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+:root{--bg:#050508;--cyan:#00E5FF;--blue:#4EA8DB;--orange:#FF8A3D;--red:#FF625C;--text:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans SC',sans-serif;overflow:hidden}
+.slide-canvas{position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;padding:28px 42px 18px;border:1px solid rgba(255,255,255,.055);background:radial-gradient(ellipse at 75% 7%,rgba(0,229,255,.08),transparent 39%),radial-gradient(ellipse at 10% 92%,rgba(255,98,92,.05),transparent 34%),linear-gradient(145deg,#07101D 0%,#050508 64%,#060B12 100%);box-shadow:0 40px 100px -20px rgba(0,0,0,.88);overflow:hidden;display:flex;flex-direction:column}
+.slide-canvas::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.020) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(180deg,rgba(0,0,0,.64),transparent 76%);pointer-events:none}
+.top-logo{width:218px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:2;padding-right:235px;margin-bottom:10px;flex-shrink:0}
+.header h1{font-size:34px;font-weight:900;line-height:1.15}
+.header h1 strong{color:var(--cyan)}
+.stage{position:relative;z-index:2;flex:1;min-height:0;display:grid;grid-template-rows:1.35fr .92fr;gap:12px}
+.hero,.card{position:relative;border:1px solid rgba(255,255,255,.10);border-radius:14px;overflow:hidden;background:#071018}
+.hero img,.card img{width:100%;height:100%;object-fit:cover;display:block}
+.hero img{object-position:center 30%}
+.card img{object-fit:cover;width:100%;height:100%}
+.card:nth-child(1) img{object-position:center 48%}
+.card:nth-child(2) img{object-position:76% 18%;transform:scale(1.18);transform-origin:76% 18%}
+.card:nth-child(3) img{object-position:center 50%}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,14,.72) 0%,rgba(5,8,14,.16) 42%,transparent 68%),linear-gradient(180deg,transparent 48%,rgba(5,8,14,.86) 100%)}
+.card .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(5,8,14,.88) 100%)}
+.copy{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:14px 18px 12px}
+.card .copy{padding:10px 12px 10px}
+.kicker{display:flex;align-items:baseline;gap:0;margin-bottom:4px;white-space:nowrap}
+.kicker .idx,.kicker h3{margin:0;font-size:28px;font-weight:900;line-height:1.15;letter-spacing:0;font-family:inherit}
+.kicker .idx{color:var(--cyan);flex-shrink:0}
+.card:nth-child(1) .idx{color:#9BD7FF}
+.card:nth-child(2) .idx{color:#FFC08A}
+.card:nth-child(3) .idx{color:#FFB0AC}
+.card .kicker .idx,.card .kicker h3{font-size:18px}
+.copy p{color:rgba(255,255,255,.76);font-size:16px;line-height:1.35;font-weight:700;max-width:520px}
+.card .copy p{font-size:13px;max-width:none}
+.row{min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.hero,.card{opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .42s ease,transform .42s ease,visibility 0s linear .42s}
+body.build-1 .hero,
+body.build-2 .hero,
+body.build-3 .hero,
+body.build-4 .hero{opacity:1;visibility:visible;transform:none}
+body.build-2 .card:nth-child(1),
+body.build-3 .card:nth-child(1),
+body.build-4 .card:nth-child(1){opacity:1;visibility:visible;transform:none}
+body.build-3 .card:nth-child(2),
+body.build-4 .card:nth-child(2){opacity:1;visibility:visible;transform:none}
+body.build-4 .card:nth-child(3){opacity:1;visibility:visible;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;transition-delay:0s!important}}
+</style>
+</head>
+<body class="build-0">
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+  <header class="header"><h1>从设备到问诊：<strong>便携睡眠脑电系统</strong></h1></header>
+  <section class="stage">
+    <article class="hero">
+      <img src="shared/media/页面_睡眠方案产品场景图_4c5dfaea.png" alt="居家佩戴便携睡眠头环">
+      <div class="shade"></div>
+      <div class="copy">
+        <div class="kicker"><span class="idx">01 · 设备｜</span><h3>头环进入家里</h3></div>
+        <p>发际下额区，整夜自主佩戴，把这一夜采下来。</p>
+      </div>
+    </article>
+    <div class="row">
+      <article class="card">
+        <img src="shared/media/界面_EEGFlow_Builder_CoreCrop_2026_07_16_7f07ba24.png" alt="EEGFlow 分析工作流">
+        <div class="shade"></div>
+        <div class="copy">
+          <div class="kicker"><span class="idx">02 · EEGFlow｜</span><h3>接进工作流</h3></div>
+          <p>质控、解码、导出，给结构判读用。</p>
+        </div>
+      </article>
+      <article class="card">
+        <img src="shared/media/界面_李凡_睡眠Dashboard_d8a32dc0.png" alt="一夜睡眠结构回传界面">
+        <div class="shade"></div>
+        <div class="copy">
+          <div class="kicker"><span class="idx">03 · 结构｜</span><h3>看见一夜切换</h3></div>
+          <p>入睡、深睡、REM 变成可回传时相图。</p>
+        </div>
+      </article>
+      <article class="card">
+        <img src="shared/media/示意图_睡眠问诊_云端现场_da54e06d.png" alt="云端看脑电、视频问诊、家里戴头环">
+        <div class="shade"></div>
+        <div class="copy">
+          <div class="kicker"><span class="idx">04 · 问诊｜</span><h3>云端看，现场问</h3></div>
+          <p>结构回到睡眠中心，接着问诊。</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+<script>window.__BUILD_LIMIT=4;</script>
+<script>
+  const setBuild = step => {
+    const safe = Math.max(0, Math.min(window.__BUILD_LIMIT || 0, Number(step) || 0));
+    document.body.className = 'build-' + safe;
+  };
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight','ArrowLeft',' ','PageDown','PageUp'].includes(event.key)) {
+      event.preventDefault();
+      parent.postMessage({type:'nav_keydown',key:event.key},'*');
+    }
+  });
+  window.addEventListener('click', () => {
+    parent.postMessage({type:'nav_keydown',key:'ArrowRight'},'*');
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    parent.postMessage({type:'nav_wheel',deltaY:event.deltaY},'*');
+  },{passive:true});
+</script>
+</body>
+</html></template>
+<template id="page-06" data-label="P06 核心技术壁垒" data-build-limit="3" data-standard-chrome="true"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 五项技术原型与硬指标</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+:root{--bg:#050508;--cyan:#00E5FF;--blue:#4EA8DB;--violet:#9C8CFF;--orange:#FF8A3D;--green:#7EE787;--text:#FFF;--muted:rgba(255,255,255,.61);--line:rgba(255,255,255,.115)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans SC',sans-serif;overflow:hidden}
+.slide-canvas{position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;padding:28px 40px 21px;border:1px solid rgba(255,255,255,.055);border-radius:0;background:radial-gradient(ellipse at 78% 5%,rgba(0,229,255,.08),transparent 39%),radial-gradient(ellipse at 8% 92%,rgba(156,140,255,.055),transparent 33%),linear-gradient(145deg,#07101D 0%,#050508 65%,#060B12 100%);box-shadow:0 40px 100px -20px rgba(0,0,0,.88);overflow:hidden;display:flex;flex-direction:column}
+.slide-canvas::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.017) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(180deg,rgba(0,0,0,.62),transparent 77%);pointer-events:none}
+.top-logo{width:210px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:2;padding-right:220px;flex-shrink:0;margin-bottom:26px;display:flex;align-items:flex-end;gap:18px}
+.header h1{font-size:38px;font-weight:900;line-height:1.06;letter-spacing:.05px;white-space:nowrap}
+.header p{font-size:20px;color:var(--blue);font-weight:650;line-height:1.15;padding-bottom:2px;white-space:nowrap}
+.prototype-grid{position:relative;z-index:2;flex:1;min-height:0;display:grid;grid-template-columns:1.12fr 1fr 1.08fr 1fr}
+.lane{--accent:var(--cyan);min-width:0;padding:0 13px;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.lane:first-child{border-left:0;padding-left:0}.lane:last-child{padding-right:0}
+.lane.electrode{--accent:var(--green)}.lane.eegflow{--accent:var(--cyan)}.lane.stim{--accent:var(--orange)}.lane.nfb{--accent:var(--blue)}.lane.creyos{--accent:var(--violet)}
+.lane-head{height:46px;flex-shrink:0;display:flex;align-items:flex-start}
+.lane-title{min-width:0;width:100%}
+.lane-title h2{font-size:22px;line-height:1.08;font-weight:900;white-space:nowrap}
+.lane-title p{margin-top:4px;color:var(--accent);font-size:16px;line-height:1.1;font-weight:900;letter-spacing:.35px;white-space:nowrap}
+.visual{position:relative;height:300px;flex-shrink:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--accent) 33%,transparent);border-radius:12px;background:linear-gradient(155deg,rgba(10,26,42,.96),rgba(4,10,18,.98));box-shadow:0 15px 30px rgba(0,0,0,.24)}
+.visual::after{content:'';position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 -48px 48px rgba(0,0,0,.28);pointer-events:none;z-index:2}
+.visual>img{width:100%;height:100%;display:block;object-fit:cover}
+.electrode .visual>img{object-fit:contain;padding:7px;filter:saturate(1.08) contrast(1.04)}
+.electrode .visual-stack{background:#050508;gap:0}
+.electrode .visual-stack img{object-fit:contain;background:#050508}
+.electrode .visual-stack img:first-child{padding:6px 10px 2px;filter:saturate(1.08) contrast(1.04)}
+.electrode .visual-stack img:last-child{width:64%;height:70%;justify-self:center;align-self:start;padding:0;object-fit:contain;object-position:center 48%;transform:translateY(-22px);background:transparent}
+.stim .visual>img{object-position:40% 50%}
+.creyos-matrix-crop{position:absolute;inset:0;overflow:hidden;background:#050508}
+.creyos-matrix-crop img{position:absolute;height:91%;width:auto;max-width:none;left:0;top:4.5%;display:block;filter:saturate(1.02) contrast(1.05)}
+.visual-stack{width:100%;height:100%;display:grid;grid-template-rows:1fr 1fr;gap:2px;background:#03101b}
+.visual-stack img{width:100%;height:100%;object-fit:cover;display:block}
+.eegflow .visual-stack img:first-child{object-position:center 18%}.eegflow .visual-stack img:last-child{object-position:left top}
+.nfb .visual-stack img{object-position:center 46%}.nfb .visual-stack img:last-child{object-position:center 31%}
+.nfb-composite{position:absolute;inset:0;overflow:hidden;background:#05080D}
+.nfb-composite .nfb-task{position:absolute;width:310%;height:auto;max-width:none;left:-105%;top:-24%;display:block;filter:saturate(.92) contrast(1.07) brightness(.78)}
+.nfb-composite .nfb-device{position:absolute;z-index:4;right:10px;top:10px;width:47%;height:35%;object-fit:cover;object-position:72% 42%;border:2px solid rgba(78,168,219,.72);border-radius:9px;box-shadow:0 8px 20px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.10);filter:saturate(.94) contrast(1.04)}
+.nfb .visual>.nfb-loop-visual{object-position:center 45%;filter:saturate(.96) contrast(1.05)}
+.specs{height:140px;flex-shrink:0;margin-top:10px;display:grid;grid-template-rows:repeat(3,1fr);border-top:1px solid rgba(255,255,255,.07)}
+.spec{display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(255,255,255,.065);min-width:0}
+.spec .value{flex-shrink:0;min-width:75px;font:900 24px/1 'Inter','Noto Sans SC',sans-serif;color:#FFF;letter-spacing:-.4px}
+.spec .value.small{font-size:19px;letter-spacing:0}
+.spec .label{font-size:11.5px;line-height:1.22;font-weight:720;color:rgba(255,255,255,.56)}
+.proof{margin-top:auto;min-height:82px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;color:rgba(255,255,255,.60);font-size:11.5px;line-height:1.3;font-weight:720}
+.proof-row{white-space:nowrap}
+.proof strong{color:var(--accent);font-weight:900}
+.creyos-role{height:64px;min-height:64px;flex-shrink:0;margin-top:10px;padding:0 10px;border:1px solid rgba(156,140,255,.22);border-radius:8px;background:rgba(156,140,255,.07);display:flex;align-items:center;gap:9px}
+.creyos-role span,.creyos-section-title{flex-shrink:0;color:var(--violet);font-size:16px;line-height:1;font-weight:900;letter-spacing:.8px}
+.creyos-role b{color:rgba(255,255,255,.90);font-size:14px;line-height:1.15;font-weight:850;white-space:nowrap}
+.creyos-evidence{flex-shrink:0;margin-top:10px}
+.creyos-section-title{height:22px;display:flex;align-items:center}
+.creyos .specs{height:158px;margin-top:8px}
+.creyos .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;text-align:left}
+.creyos .spec .value{min-width:0;font-size:28px;white-space:nowrap}
+.creyos .spec .label{padding-left:10px;color:rgba(255,255,255,.68);font-size:14.5px;font-weight:760;text-align:left}
+.creyos-barrier{height:90px;min-height:90px;flex-shrink:0;margin-top:auto;padding:10px 8px;border:1px solid rgba(156,140,255,.38);border-radius:9px;background:linear-gradient(90deg,rgba(156,140,255,.13),rgba(10,18,31,.86));display:flex;flex-direction:column;justify-content:center;gap:12px}
+.creyos-barrier-items{width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.creyos-barrier strong{color:#E8E4FF;font-size:14.5px;line-height:1.15;font-weight:900;white-space:nowrap}
+.electrode-role{height:64px;min-height:64px;flex-shrink:0;margin-top:10px;padding:0 10px;border:1px solid rgba(126,231,135,.22);border-radius:8px;background:rgba(126,231,135,.07);display:flex;align-items:center;gap:9px}
+.electrode-role span,.electrode-section-title{flex-shrink:0;color:var(--green);font-size:16px;line-height:1;font-weight:900;letter-spacing:.8px}
+.electrode-role b{color:rgba(255,255,255,.90);font-size:14px;line-height:1.15;font-weight:850;white-space:nowrap}
+.electrode-evidence{flex-shrink:0;margin-top:10px}
+.electrode-section-title{height:22px;display:flex;align-items:center}
+.electrode .specs{height:158px;margin-top:8px}
+.electrode .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;text-align:left}
+.electrode .spec .value{min-width:0;font-size:28px;white-space:nowrap}
+.electrode .spec .label{padding-left:10px;color:rgba(255,255,255,.68);font-size:14.5px;font-weight:760;text-align:left}
+.electrode-barrier{height:90px;min-height:90px;flex-shrink:0;margin-top:auto;padding:10px 8px;border:1px solid rgba(126,231,135,.36);border-radius:9px;background:linear-gradient(90deg,rgba(126,231,135,.12),rgba(10,18,31,.86));display:flex;flex-direction:column;justify-content:center;gap:12px}
+.electrode-barrier-items{width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.electrode-barrier strong{color:#DDFBE2;font-size:14.5px;line-height:1.15;font-weight:900;white-space:nowrap}
+.eegflow-role{height:64px;min-height:64px;flex-shrink:0;margin-top:10px;padding:0 10px;border:1px solid rgba(0,229,255,.22);border-radius:8px;background:rgba(0,229,255,.07);display:flex;align-items:center;gap:9px}
+.eegflow-role span,.eegflow-section-title{flex-shrink:0;color:var(--cyan);font-size:16px;line-height:1;font-weight:900;letter-spacing:.8px}
+.eegflow-role b{color:rgba(255,255,255,.90);font-size:14px;line-height:1.15;font-weight:850;white-space:nowrap}
+.eegflow-evidence{flex-shrink:0;margin-top:10px}
+.eegflow-section-title{height:22px;display:flex;align-items:center}
+.eegflow .specs{height:158px;margin-top:8px}
+.eegflow .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;text-align:left}
+.eegflow .spec .value{min-width:0;font-size:28px;white-space:nowrap}
+.eegflow .spec .label{padding-left:10px;color:rgba(255,255,255,.68);font-size:14.5px;font-weight:760;text-align:left}
+.eegflow-barrier{height:90px;min-height:90px;flex-shrink:0;margin-top:auto;padding:10px 8px;border:1px solid rgba(0,229,255,.36);border-radius:9px;background:linear-gradient(90deg,rgba(0,229,255,.12),rgba(10,18,31,.86));display:flex;flex-direction:column;justify-content:center;gap:12px}
+.eegflow-barrier-items{width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.eegflow-barrier strong{color:#D4FBFF;font-size:14.5px;line-height:1.15;font-weight:900;white-space:nowrap}
+.stim-role{height:64px;min-height:64px;flex-shrink:0;margin-top:10px;padding:0 10px;border:1px solid rgba(255,138,61,.22);border-radius:8px;background:rgba(255,138,61,.07);display:flex;align-items:center;gap:9px}
+.stim-role span,.stim-section-title{flex-shrink:0;color:var(--orange);font-size:16px;line-height:1;font-weight:900;letter-spacing:.8px}
+.stim-role b{color:rgba(255,255,255,.90);font-size:14px;line-height:1.15;font-weight:850;white-space:nowrap}
+.stim-evidence{flex-shrink:0;margin-top:10px}
+.stim-section-title{height:22px;display:flex;align-items:center}
+.stim .specs{height:158px;margin-top:8px}
+.stim .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;text-align:left}
+.stim .spec .value{min-width:0;font-size:28px;white-space:nowrap}
+.stim .spec .value.small{font-size:21px}
+.stim .spec .label{padding-left:10px;color:rgba(255,255,255,.68);font-size:14.5px;font-weight:760;text-align:left}
+.stim-barrier{height:90px;min-height:90px;flex-shrink:0;margin-top:auto;padding:10px 8px;border:1px solid rgba(255,138,61,.36);border-radius:9px;background:linear-gradient(90deg,rgba(255,138,61,.12),rgba(10,18,31,.86));display:flex;flex-direction:column;justify-content:center;gap:12px}
+.stim-barrier-items{width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.stim-barrier strong{color:#FFE2CE;font-size:14.5px;line-height:1.15;font-weight:900;white-space:nowrap}
+.stim-barrier-items.single strong{font-size:16px}
+.nfb-role{height:64px;min-height:64px;flex-shrink:0;margin-top:10px;padding:0 10px;border:1px solid rgba(78,168,219,.22);border-radius:8px;background:rgba(78,168,219,.07);display:flex;align-items:center;gap:9px}
+.nfb-role span,.nfb-section-title{flex-shrink:0;color:var(--blue);font-size:16px;line-height:1;font-weight:900;letter-spacing:.8px}
+.nfb-role b{color:rgba(255,255,255,.90);font-size:14px;line-height:1.15;font-weight:850;white-space:nowrap}
+.nfb-evidence{flex-shrink:0;margin-top:10px}
+.nfb-section-title{height:22px;display:flex;align-items:center}
+.nfb .specs{height:158px;margin-top:8px}
+.nfb .spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;text-align:left}
+.nfb .spec .value{min-width:0;font-size:28px;white-space:nowrap}
+.nfb .spec .value.small{font-size:21px}
+.nfb .spec .label{padding-left:10px;color:rgba(255,255,255,.68);font-size:14.5px;font-weight:760;text-align:left}
+.nfb-barrier{height:90px;min-height:90px;flex-shrink:0;margin-top:auto;padding:10px 8px;border:1px solid rgba(78,168,219,.36);border-radius:9px;background:linear-gradient(90deg,rgba(78,168,219,.12),rgba(10,18,31,.86));display:flex;flex-direction:column;justify-content:center;gap:12px}
+.nfb-barrier-items{width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.nfb-barrier strong{color:#D7F0FF;font-size:14.5px;line-height:1.15;font-weight:900;white-space:nowrap}
+.barrier-heading{width:100%;display:flex;align-items:center;gap:5px}
+.barrier-role,.barrier-label{flex-shrink:0;font-size:16px;line-height:1;font-weight:900;white-space:nowrap}
+.barrier-label{color:rgba(255,255,255,.78)}
+.barrier-divider{flex-shrink:0;color:rgba(255,255,255,.30);font-size:18px;line-height:1;font-weight:700}
+.creyos .barrier-role{color:var(--violet)}.electrode .barrier-role{color:var(--green)}.eegflow .barrier-role{color:var(--cyan)}.stim .barrier-role{color:var(--orange);font-size:15px}.stim .barrier-heading{gap:5px}.lane.stim .lane-title h2{font-size:20px}.nfb .barrier-role{color:var(--blue)}
+.lane{opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .42s ease,transform .42s ease,visibility 0s linear .42s}
+.lane.is-visible{opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.lane{transition-duration:.01ms!important;transition-delay:0s!important}}
+</style>
+</head>
+<body>
+<!--
+  SOURCES / PROVENANCE
+  - Creyos official task visual: https://creyos.com/online-cognitive-tasks (official multi-task asset downloaded 2026-08-18)
+  - Creyos public metrics: https://creyos.com/condition-focused-protocols/adhd-assessment (20M tasks completed, 85K participant normative database, 400 peer-reviewed studies)
+  - AUTHOR_CONFIRMED 2026-08-18: Creyos in use with Canadian open-pit oil-sands workers and train drivers.
+  - Lin Jiaqi current profile: https://biotech.dlut.edu.cn/szdw/kytd/swpzjnmswjmyjs.htm (DLUT professor; former MIT postdoc; semi-dry hydrogel electrode development and scale-up).
+  - AUTHOR_CONFIRMED 2026-08-18: hydrogel electrode is exclusively supplied to NeoPulse; the production capability is integrated into the team.
+  - AUTHOR_CONFIRMED 2026-08-18: performance advantages include low preparation/reuse burden, no post-use cleaning, wet-electrode-comparable signal quality, and suitability for repeated large-cohort use.
+  - AUTHOR_CONFIRMED 2026-08-18: Ministry of Science and Technology STI 2030 project "Integrated high-precision non-invasive/minimally invasive BCI based on flexible biomaterials"; Xue et al., 2023, Hot Paper Award 2022-2024 (S|EX131).
+  - BP_电极_林佳奇.pdf pp. 22, 24: repeated use for 14 days at 2 h/day without damage; production capacity up to 1,000 electrodes/day.
+  - EEGFlow code evidence: mcp_server.py supports 8 input formats, 50+ registered processing modules, and 5 named export formats.
+  - AUTHOR_CONFIRMED 2026-08-18: EEGFlow endpoint decoding latency is 1 second.
+  - Driving-safety technical deck: multimodal fusion RF accuracy 85.65%, displayed as 85.7% after rounding.
+  - AUTHOR_CONFIRMED 2026-08-18: third-column product wording uses 50+ analysis algorithms.
+  - Industrial-safety technical deck: continuous direct-current stimulation; 200 repeated recovery tests; 95%+ average effective recovery; national-defense science and industry project accepted as excellent.
+  - Neurofeedback technical deck: real-time module-level EEG feedback; 15-30 min per session; 6 sessions over 2 weeks; individualized baseline comparison.
+  - AUTHOR_CONFIRMED 2026-08-19: 50+ people participated in laboratory neurofeedback validation; the 60.9% and 56.5% figures remain based on 23 valid 2-3 month follow-up responses in the technical deck.
+  - Stimulation still: MentalFatigue_Vehicle_CN_DUT.mp4 @ 61.45 s.
+  - Neurofeedback composite: Neurofeedback_CN_DUT.mp4 @ 27.50 s real device fitting + 38.00 s real-time training interface.
+  - GENERATED_VISUAL 2026-08-19: neurofeedback closed-loop explanatory composite derived from the two real training stills above; used as a schematic, not as outcome evidence.
+  - AUTHOR_CONFIRM: exact licensing geography wording, electrode raw test records, and 90.37% recovery-effectiveness denominator.
+-->
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+  <header class="header">
+    <h1>核心技术壁垒</h1>
+    <p>贯通评估—采集—分析—调控</p>
+  </header>
+
+  <main class="prototype-grid">
+    <section class="lane creyos">
+      <div class="lane-head"><div class="lane-title"><h2>1｜Creyos数字认知评估</h2></div></div>
+      <figure class="visual"><div class="creyos-matrix-crop"><img src="shared/media/授权_Creyos_认知任务界面_20260818.png" alt="Creyos官方多类认知任务界面"></div></figure>
+      <div class="creyos-evidence">
+        <div class="creyos-section-title">关键证据</div>
+        <div class="specs">
+          <div class="spec"><span class="value">2000<span style="font-size:14px;margin-left:2px">万+</span></span><span class="label">全球任务完成量</span></div>
+          <div class="spec"><span class="value">8.5<span style="font-size:14px;margin-left:2px">万+</span></span><span class="label">常模数据库人数</span></div>
+          <div class="spec"><span class="value">400+</span><span class="label">期刊论文</span></div>
+        </div>
+      </div>
+      <div class="creyos-barrier"><div class="barrier-heading"><span class="barrier-role">认知评估</span><span class="barrier-divider">｜</span><span class="barrier-label">核心壁垒</span></div><div class="creyos-barrier-items"><strong>中国区独家授权</strong></div></div>
+    </section>
+
+    <section class="lane electrode">
+      <div class="lane-head"><div class="lane-title"><h2>2｜水凝胶 / 金属纸电极</h2></div></div>
+      <figure class="visual"><div class="visual-stack"><img src="shared/media/产品_electrode_transparent_7f925adb.png" alt="水凝胶脑电电极"><img src="shared/media/产品_金属纸电极特写_c527b46c.png" alt="斜线金属纸电极"></div></figure>
+      <div class="electrode-evidence">
+        <div class="electrode-section-title">技术参数</div>
+        <div class="specs">
+          <div class="spec"><span class="value">&lt;20<span style="font-size:14px;margin-left:2px">kΩ</span></span><span class="label">接触阻抗</span></div>
+          <div class="spec"><span class="value">12<span style="font-size:14px;margin-left:2px">h</span></span><span class="label">持续采集</span></div>
+          <div class="spec"><span class="value">14<span style="font-size:14px;margin-left:2px">天</span></span><span class="label">重复使用</span></div>
+        </div>
+      </div>
+      <div class="electrode-barrier"><div class="barrier-heading"><span class="barrier-role">稳定采集</span><span class="barrier-divider">｜</span><span class="barrier-label">核心壁垒</span></div><div class="electrode-barrier-items"><strong>科技创新2030项目</strong><strong>日产1000个</strong></div></div>
+    </section>
+
+    <section class="lane eegflow">
+      <div class="lane-head"><div class="lane-title"><h2>3｜EEGFlow分析平台</h2></div></div>
+      <figure class="visual"><div class="visual-stack"><img src="shared/media/界面_EEGFlow_Workspace_Home_CoreCrop_2026_07_17_74302939.png" alt="EEGFlow 数据接入界面"><img src="shared/media/界面_EEGFlow_Builder_CoreCrop_2026_07_16_7f07ba24.png" alt="EEGFlow 模块化工作流界面"></div></figure>
+      <div class="eegflow-evidence">
+        <div class="eegflow-section-title">技术参数</div>
+        <div class="specs">
+          <div class="spec"><span class="value">85.7<span style="font-size:14px;margin-left:2px">%</span></span><span class="label">融合模型准确率</span></div>
+          <div class="spec"><span class="value">1<span style="font-size:14px;margin-left:2px">秒</span></span><span class="label">实时输出</span></div>
+          <div class="spec"><span class="value">50+</span><span class="label">分析算法</span></div>
+        </div>
+      </div>
+      <div class="eegflow-barrier"><div class="barrier-heading"><span class="barrier-role">睡眠分析</span><span class="barrier-divider">｜</span><span class="barrier-label">核心壁垒</span></div><div class="eegflow-barrier-items"><strong>自主算法平台</strong><strong>4.1万小时真实脑电</strong></div></div>
+    </section>
+
+    <section class="lane stim">
+      <div class="lane-head"><div class="lane-title"><h2>4｜无创电刺激 / 音乐</h2></div></div>
+      <figure class="visual"><img src="shared/media/证据_电刺激真实驾驶介入_20260818.jpg" alt="真实驾驶环境中的颈部无创电刺激"></figure>
+      <div class="stim-evidence">
+        <div class="stim-section-title">恢复验证</div>
+        <div class="specs">
+          <div class="spec"><span class="value">3<span style="font-size:14px;margin-left:2px">项</span></span><span class="label">恢复机制表征</span></div>
+          <div class="spec"><span class="value">200<span style="font-size:14px;margin-left:2px">次</span></span><span class="label">重复测试</span></div>
+          <div class="spec"><span class="value">95<span style="font-size:14px;margin-left:2px">%+</span></span><span class="label">有效恢复</span></div>
+        </div>
+      </div>
+      <div class="stim-barrier"><div class="barrier-heading"><span class="barrier-role">闭环睡眠调控</span><span class="barrier-divider">｜</span><span class="barrier-label">核心壁垒</span></div><div class="stim-barrier-items"><strong>白天电刺激</strong><strong>夜间声音调控</strong></div></div>
+    </section>
+
+  </main>
+
+</div>
+<script>
+  const lanes = [...document.querySelectorAll('.lane')];
+  const setBuild = step => {
+    const safe = Math.max(0, Math.min(3, Number(step) || 0));
+    lanes.forEach((lane, index) => lane.classList.toggle('is-visible', index <= safe));
+  };
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight','ArrowLeft',' ','PageDown','PageUp'].includes(event.key)) {
+      event.preventDefault();
+      parent.postMessage({type:'nav_keydown',key:event.key},'*');
+    }
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    parent.postMessage({type:'nav_wheel',deltaY:event.deltaY},'*');
+  },{passive:true});
+  setBuild(0);
+</script>
+</body>
+</html>
+</template>
+<template id="page-07" data-label="P07 世界级脑科学方法" data-build-limit="1"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 科学顾问方法转化页（Layout v4 原型）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap');
+
+:root{
+  --bg:#050508;
+  --panel:#081421;
+  --cyan:#00E5FF;
+  --orange:#FF9D5C;
+  --violet:#9C8CFF;
+  --green:#7EE787;
+  --text:#FFFFFF;
+  --muted:rgba(255,255,255,.60);
+  --line:rgba(255,255,255,.10);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%}
+body{
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font-family:'Inter','Noto Sans SC',sans-serif;
+}
+
+.slide-canvas{
+  position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;
+  padding:28px 40px 24px;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 30%,rgba(0,229,255,.085),transparent 31%),
+    radial-gradient(ellipse at 8% 35%,rgba(255,157,92,.055),transparent 26%),
+    radial-gradient(ellipse at 92% 35%,rgba(156,140,255,.055),transparent 26%),
+    linear-gradient(145deg,#07101D 0%,#050508 68%,#060B12 100%);
+  border:1px solid rgba(255,255,255,.055);
+  display:flex;flex-direction:column;
+}
+.slide-canvas::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.60),transparent 74%);
+}
+
+.top-logo{width:205px;position:absolute;top:8px;right:12px;z-index:20}
+.header{position:relative;z-index:4;flex:0 0 68px;padding-right:205px}
+.header h1{font-size:34px;line-height:1.14;font-weight:900;letter-spacing:.05px;white-space:nowrap}
+.header h1 strong{color:var(--cyan)}
+
+.people-stage{
+  position:relative;z-index:3;flex:0 0 376px;
+  display:grid;grid-template-columns:minmax(0,1.16fr) minmax(0,1fr) minmax(0,1.16fr);
+  gap:22px;align-items:stretch;
+}
+
+.advisor,.founder{
+  --accent:var(--cyan);position:relative;min-width:0;overflow:hidden;
+  background:linear-gradient(164deg,color-mix(in srgb,var(--accent) 7%,rgba(8,20,33,.86)),rgba(5,12,22,.65) 62%);
+  border-top:3px solid var(--accent);
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+.advisor::before,.founder::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 5%,transparent),transparent 38%,transparent 62%,color-mix(in srgb,var(--accent) 3%,transparent));
+}
+.advisor.cong{--accent:var(--orange)}
+.advisor.owen{--accent:var(--violet)}
+.founder{
+  --accent:var(--cyan);border:1px solid rgba(0,229,255,.42);border-top:3px solid var(--cyan);
+  background:linear-gradient(180deg,rgba(0,229,255,.105),rgba(6,17,29,.76) 46%,rgba(5,12,22,.66));
+  box-shadow:0 0 28px rgba(0,229,255,.08);overflow:visible;
+}
+
+.advisor{padding:18px 18px 4px;display:flex;flex-direction:column}
+.advisor-head{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center}
+.portrait-rect{
+  width:112px;height:132px;padding:3px;border-radius:15px;
+  background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 12%,transparent));
+  box-shadow:0 10px 24px rgba(0,0,0,.36);
+}
+.portrait-rect img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:12px;border:2px solid #07111D}
+.identity{min-width:0}
+.identity .role{font-size:17px;line-height:1.2;font-weight:900;color:var(--accent);letter-spacing:.1px}
+.identity h2{margin-top:7px;font-size:34px;line-height:1.02;font-weight:900;white-space:nowrap}
+.identity h2 .name-suffix{margin-left:8px;font-size:18px;font-weight:900;color:var(--accent);vertical-align:baseline}
+.identity .org{margin-top:9px;font-size:17px;line-height:1.3;font-weight:850;color:rgba(255,255,255,.78)}
+.identity .honor{margin-top:6px;font-size:16px;line-height:1.2;font-weight:900;color:rgba(255,255,255,.86);white-space:nowrap}
+.identity .honor.obe{color:var(--accent)}
+
+.evidence{margin-top:14px;display:grid;gap:8px;list-style:none}
+.advisor.cong .evidence{margin-top:35px}
+.advisor.owen .evidence{margin-top:16px}
+.evidence li{position:relative;padding-left:14px;font-size:15px;line-height:1.28;font-weight:700;color:rgba(255,255,255,.76)}
+.evidence li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:1.5px;background:var(--accent);box-shadow:0 0 7px color-mix(in srgb,var(--accent) 64%,transparent)}
+.evidence strong{color:var(--accent);font-weight:900}
+.contribution{min-height:42px;margin-top:auto;padding-top:4px;border-top:1px solid color-mix(in srgb,var(--accent) 25%,transparent);display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-size:20px;line-height:1.25;font-weight:900;color:rgba(255,255,255,.88)}
+.contribution strong{color:var(--accent)}
+
+.founder{display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px 16px 4px}
+.portrait-round{
+  width:126px;height:126px;margin-top:0;padding:4px;border-radius:50%;
+  background:linear-gradient(145deg,var(--cyan),rgba(0,229,255,.18));
+  box-shadow:0 0 28px rgba(0,229,255,.20),0 12px 25px rgba(0,0,0,.42);
+}
+.portrait-round img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;border:2px solid #07111D}
+.founder-name-row{margin-top:9px;display:flex;align-items:baseline;justify-content:center;gap:6px;white-space:nowrap}
+.founder h2{font-size:27px;line-height:1;font-weight:900}
+.founder-name-row .degree{font-size:17px;line-height:1;font-weight:900;color:rgba(255,255,255,.86)}
+.founder .founder-title{margin-top:7px;font-size:14px;line-height:1.3;font-weight:800;color:rgba(255,255,255,.72);white-space:nowrap}
+.founder .founder-title strong{color:var(--cyan);font-weight:900}
+.founder .founder-evidence{width:100%;margin-top:14px;display:grid;gap:8px;list-style:none;text-align:left}
+.founder .founder-evidence li{position:relative;padding-left:13px;font-size:14px;line-height:1.28;font-weight:750;color:rgba(255,255,255,.77)}
+.founder .founder-evidence li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:1.5px;background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.65)}
+.founder .founder-evidence strong{color:var(--cyan);font-weight:900}
+.founder .founder-conclusion{width:100%;min-height:42px;margin-top:auto;padding-top:4px;border-top:1px solid rgba(0,229,255,.26);display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1.3;font-weight:900;color:rgba(255,255,255,.84)}
+.founder .founder-conclusion strong{color:var(--cyan)}
+.founder::after{
+  content:'';position:absolute;left:50%;bottom:-31px;width:2px;height:31px;transform:translateX(-50%);
+  background:linear-gradient(var(--cyan),rgba(0,229,255,.12));box-shadow:0 0 10px rgba(0,229,255,.35);
+  opacity:0;transition:opacity .24s ease;
+}
+
+.feed{--date-color:var(--cyan);position:absolute;top:196px;height:1px;z-index:6;pointer-events:none}
+.feed::after{content:'';position:absolute;top:-4px;width:8px;height:8px;border-top:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+.feed-date{
+  position:absolute;top:-20px;white-space:nowrap;
+  font-size:10.5px;line-height:1;font-weight:900;letter-spacing:.35px;color:var(--date-color);
+  text-shadow:0 1px 5px #02050A,0 0 10px color-mix(in srgb,var(--date-color) 36%,transparent);
+}
+.feed-left{--date-color:var(--orange);left:31.5%;width:5.84%;background:linear-gradient(90deg,rgba(255,157,92,.32),var(--cyan))}
+.feed-left .feed-date{right:0}
+.feed-left::after{right:0;transform:rotate(45deg)}
+.feed-right{--date-color:var(--violet);right:31.5%;width:5.84%;background:linear-gradient(90deg,var(--cyan),rgba(156,140,255,.32))}
+.feed-right .feed-date{left:0}
+.feed-right::after{left:0;transform:rotate(225deg)}
+
+.capability-zone{
+  position:relative;z-index:2;flex:1;min-height:0;margin-top:12px;
+  display:flex;flex-direction:column;
+}
+.capability-intro{
+  flex:0 0 28px;display:flex;align-items:center;justify-content:center;min-width:0;
+}
+.capability-intro p{
+  min-width:0;font-size:17px;line-height:1.15;font-weight:850;letter-spacing:.15px;
+  color:rgba(255,255,255,.78);white-space:nowrap;
+}
+.capability-intro .flow-arrow{padding:0 10px;color:rgba(255,255,255,.36)}
+.capability-intro strong{color:var(--cyan);font-weight:900}
+.capability-grid{
+  flex:1;min-height:0;margin-top:8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+}
+.cap-card{
+  --accent:var(--cyan);position:relative;min-width:0;overflow:hidden;
+  padding:10px 10px 8px;display:flex;flex-direction:column;
+  background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 8%,rgba(6,15,25,.92)),rgba(4,9,16,.92) 72%);
+  border-top:2px solid var(--accent);border-bottom:1px solid rgba(255,255,255,.10);
+}
+.cap-card.network{--accent:var(--orange)}
+.cap-card.ip{--accent:#FFD166}
+.cap-card.eegflow{--accent:var(--cyan)}
+.cap-card.creyos{--accent:var(--violet)}
+.cap-headline{
+  flex:0 0 26px;min-height:26px;display:flex;align-items:baseline;gap:4px;
+  min-width:0;overflow:hidden;white-space:nowrap;
+}
+.cap-label{
+  flex:0 0 auto;font-size:9.5px;line-height:1;font-weight:900;
+  letter-spacing:.55px;color:var(--accent);
+}
+.cap-claim{min-width:0;font-size:15px;line-height:1.05;font-weight:900;color:rgba(255,255,255,.92)}
+.cap-claim strong{font-size:22px;line-height:1;font-weight:900;color:var(--accent);letter-spacing:-.3px}
+.cap-card.ip .cap-claim strong{font-size:18px;letter-spacing:-.5px}
+.cap-card.eegflow .cap-claim strong,.cap-card.creyos .cap-claim strong{font-size:20px;letter-spacing:0}
+.cap-media{
+  position:relative;flex:1;min-height:0;margin-top:7px;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--accent) 24%,rgba(255,255,255,.05));
+  background:#02070D;
+}
+.cap-media>img{display:block;width:100%;height:100%;object-fit:cover}
+.network .cap-media>img{object-position:center 47%;filter:saturate(.9) contrast(1.06)}
+.eegflow .cap-media>img{object-position:center center}
+.creyos .cap-media>img{object-position:45% 47%}
+.map-mark{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.map-mark::after{content:attr(data-label);position:absolute;left:9px;top:-4px;font-size:8.5px;line-height:1;font-weight:900;color:#fff;white-space:nowrap;text-shadow:0 1px 4px #000}
+.map-mark.ca{left:20%;top:29%}.map-mark.uk{left:47%;top:31%}.map-mark.fi{left:52%;top:23%}.map-mark.cn{left:76%;top:43%}
+.ip-media{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:transparent;border:0}
+.ip-shot{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(255,209,102,.20);background:#050505}
+.ip-shot img{display:block;width:100%;height:100%;object-fit:cover}
+.ip-shot span{
+  position:absolute;left:5px;bottom:5px;padding:3px 5px;background:rgba(0,0,0,.76);
+  border-left:2px solid var(--accent);font-size:9px;line-height:1;font-weight:900;color:#fff;
+}
+.cap-foot{
+  margin-top:7px;min-height:15px;font-size:10.8px;line-height:1.2;font-weight:800;
+  color:rgba(255,255,255,.66);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cap-foot strong{color:var(--accent);font-weight:900}
+
+.capability-intro,.cap-card{
+  opacity:0;transform:translateY(13px);
+  transition:opacity .34s ease,transform .38s cubic-bezier(.2,.75,.25,1);
+}
+body[data-build="1"] .founder::after{opacity:1}
+body[data-build="1"] .capability-intro,
+body[data-build="1"] .cap-card{opacity:1;transform:translateY(0)}
+body[data-build="1"] .capability-intro{transition-delay:.04s}
+body[data-build="1"] .cap-card:nth-child(1){transition-delay:.10s}
+body[data-build="1"] .cap-card:nth-child(2){transition-delay:.16s}
+body[data-build="1"] .cap-card:nth-child(3){transition-delay:.22s}
+body[data-build="1"] .cap-card:nth-child(4){transition-delay:.28s}
+
+@media(prefers-reduced-motion:reduce){
+  .founder::after,.capability-intro,.cap-card{transition:none!important}
+}
+
+@media(max-width:1400px){
+  .top-logo{width:176px}.header{padding-right:180px}.header h1{font-size:30px}
+  .people-stage{flex-basis:326px;gap:16px}.advisor{padding:13px 13px 4px}.advisor-head{grid-template-columns:90px minmax(0,1fr);gap:12px}.portrait-rect{width:90px;height:108px}.identity h2{font-size:27px}.identity h2 .name-suffix{font-size:13px}.identity .role{font-size:12.5px}.identity .org{font-size:13px}.identity .honor{font-size:12.5px}.evidence{margin-top:12px;gap:7px}.evidence li{font-size:11px}.contribution{min-height:36px;font-size:15.5px}
+  .portrait-round{width:108px;height:108px}.founder h2{font-size:23px}.founder-name-row .degree{font-size:12px}.founder .founder-title{font-size:10.5px}.founder .founder-evidence{margin-top:12px;gap:7px}.founder .founder-evidence li{font-size:10.8px}.founder .founder-conclusion{min-height:36px;font-size:13px}.feed{top:174px}.feed-date{top:-16px;font-size:8px}
+  .capability-zone{margin-top:10px}.capability-intro{flex-basis:22px}.capability-intro p{font-size:13px}.capability-intro .flow-arrow{padding:0 7px}
+  .capability-grid{margin-top:6px;gap:9px}.cap-card{padding:8px 8px 6px}.cap-headline{flex-basis:20px;min-height:20px;gap:3px}.cap-label{font-size:8px}.cap-claim{font-size:12px}.cap-claim strong{font-size:18px}.cap-card.ip .cap-claim strong{font-size:15px}.cap-card.eegflow .cap-claim strong,.cap-card.creyos .cap-claim strong{font-size:17px}.cap-media{margin-top:5px}.cap-foot{margin-top:5px;font-size:8.8px}.map-mark::after{font-size:7px}
+}
+</style>
+</head>
+<body>
+<div class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+
+  <header class="header">
+    <h1>世界级脑科学方法，经创始团队整合为<strong>可运行的现场系统</strong></h1>
+  </header>
+
+  <section class="people-stage" aria-label="两位科学顾问的方法体系经创始团队整合">
+    <span class="feed feed-left"><span class="feed-date">2016—2022</span></span>
+    <span class="feed feed-right"><span class="feed-date">2022—至今</span></span>
+
+    <article class="advisor cong">
+      <div class="advisor-head">
+        <div class="portrait-rect"><img src="shared/media/头像_丛丰裕_7fb3abc5.png" alt="丛丰裕"></div>
+        <div class="identity">
+          <div class="role">首席科学顾问｜睡眠监测与干预</div>
+          <h2>丛丰裕<span class="name-suffix">教授</span></h2>
+          <div class="org">大连大学副校长<br>大连理工大学教授</div>
+        </div>
+      </div>
+      <ul class="evidence">
+        <li>国家科技创新 2030「脑科学与类脑研究」<strong>管理专家组</strong></li>
+        <li><strong>300+</strong> 论文·英文专著｜<strong>全球前 2%</strong> 顶尖科学家</li>
+        <li>近五年科研进款 <strong>4,000+ 万</strong>｜国家重点项目 ×2</li>
+        <li>工信部「揭榜挂帅」×2｜<strong>辽宁省一等奖</strong>·学术任职</li>
+        <li>芬兰于韦斯屈莱大学兼职教授｜联合 <strong>5 国</strong>大学培养人才</li>
+      </ul>
+      <p class="contribution">贡献：构建<strong>睡眠监测与干预</strong>研究与场景应用体系</p>
+    </article>
+
+    <article class="founder">
+      <div class="portrait-round"><img src="shared/media/头像_王小宇_ea467ade.png" alt="王小宇"></div>
+      <div class="founder-name-row">
+        <h2>王小宇</h2><span class="degree">博士</span>
+      </div>
+      <div class="founder-title"><strong>创始人 CEO</strong>｜大连理工大学博士｜Owen Lab 博士后</div>
+      <ul class="founder-evidence">
+        <li>意识、认知与脑机接口研究</li>
+        <li>一作／通讯论文 <strong>10+</strong>｜主持<strong>国家级课题</strong></li>
+        <li><strong>EEGFlow 独立开发者</strong>｜信号处理与算法建模</li>
+        <li>推动睡眠监测与干预进入院外场景运行</li>
+      </ul>
+      <p class="founder-conclusion">融合两类方法，形成<strong>可运行的现场系统</strong></p>
+    </article>
+
+    <article class="advisor owen">
+      <div class="advisor-head">
+        <div class="portrait-rect"><img src="shared/media/头像_AdrianOwen_64e99eff.png" alt="Adrian Owen"></div>
+        <div class="identity">
+          <div class="role">意识研究顾问｜意识与认知评估</div>
+          <h2>Adrian Owen<span class="name-suffix">教授</span></h2>
+          <div class="org">西安大略大学教授</div>
+          <div class="honor obe">英加三院院士｜大英帝国勋章 OBE</div>
+        </div>
+      </div>
+      <ul class="evidence">
+        <li>加拿大卓越研究讲席教授</li>
+        <li><strong>加拿大高等研究院（CIFAR）</strong>项目联合主任</li>
+        <li>2006《Science》开创隐匿意识检测｜2024《NEJM》发现 <strong>25% 认知运动分离</strong></li>
+        <li>Creyos 首席科学官｜数字认知任务核心发明者</li>
+        <li>领导 Owen Lab｜融合神经影像、脑电与数字认知评估</li>
+      </ul>
+      <p class="contribution">贡献：<strong>Creyos 认知评估</strong>与训练效果追踪</p>
+    </article>
+  </section>
+
+  <section class="capability-zone" aria-label="支撑现场系统的四类可验证能力">
+    <div class="capability-intro">
+      <p>方法来源<span class="flow-arrow">→</span>自主沉淀<span class="flow-arrow">→</span><strong>EEGFlow × Creyos 双工具协同</strong></p>
+    </div>
+
+    <div class="capability-grid">
+      <article class="cap-card network">
+        <div class="cap-headline"><span class="cap-label">01｜科研网络：</span><span class="cap-claim"><strong>7+</strong> 顶尖科学家与智囊</span></div>
+        <div class="cap-media">
+          <img src="shared/media/示意图_国际协同网络地图_f239a52b.png" alt="国际科研协同网络">
+          <span class="map-mark ca" data-label="加拿大"></span>
+          <span class="map-mark uk" data-label="英国"></span>
+          <span class="map-mark fi" data-label="芬兰"></span>
+          <span class="map-mark cn" data-label="中国"></span>
+        </div>
+        <div class="cap-foot"><strong>4 教授</strong>｜40+ 博士｜20 年科研沉淀</div>
+      </article>
+
+      <article class="cap-card ip">
+        <div class="cap-headline"><span class="cap-label">02｜自主资产：</span><span class="cap-claim"><strong>12+</strong> 专利｜<strong>10+</strong> 软著</span></div>
+        <div class="cap-media ip-media">
+          <div class="ip-shot"><img src="shared/media/证据_发明专利矩阵图_204cd9e0.png" alt="发明专利矩阵"><span>发明专利</span></div>
+          <div class="ip-shot"><img src="shared/media/证据_软件著作权矩阵图_053a588b.png" alt="软件著作权矩阵"><span>软件著作权</span></div>
+        </div>
+        <div class="cap-foot">算法、软件与系统的<strong>自主沉淀</strong></div>
+      </article>
+
+      <article class="cap-card eegflow">
+        <div class="cap-headline"><span class="cap-label">03｜工程平台：</span><span class="cap-claim"><strong>EEGFlow</strong> 实时脑电平台</span></div>
+        <div class="cap-media"><img src="shared/media/界面_EEGFlow平台卡片_98f87186.png" alt="EEGFlow 实时脑电平台界面"></div>
+        <div class="cap-foot"><strong>自主开发</strong>｜信号处理｜算法建模｜实时分析</div>
+      </article>
+
+      <article class="cap-card creyos">
+        <div class="cap-headline"><span class="cap-label">04｜认知评估：</span><span class="cap-claim"><strong>Creyos</strong> 数字认知评估</span></div>
+        <div class="cap-media"><img src="shared/media/授权_Creyos_认知任务界面_20260818.png" alt="Creyos 数字认知任务界面"></div>
+        <div class="cap-foot"><strong>Owen 科学体系</strong>｜评估与训练效果追踪</div>
+      </article>
+    </div>
+  </section>
+</div>
+<script>
+(() => {
+  let buildStep = 0;
+  const capabilityZone = document.querySelector('.capability-zone');
+
+  function setBuild(step) {
+    const safe = Math.max(0, Math.min(1, Number(step) || 0));
+    buildStep = safe;
+    document.body.dataset.build = String(safe);
+    capabilityZone.setAttribute('aria-hidden', safe === 0 ? 'true' : 'false');
+  }
+
+  window.setBuild = setBuild;
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+  });
+
+  document.addEventListener('click', () => {
+    if (window.parent === window) setBuild((buildStep + 1) % 2);
+    else window.top.postMessage({ type:'nav_keydown', key:'ArrowRight' }, '*');
+  });
+
+  window.addEventListener('keydown', event => {
+    if (!['ArrowRight','ArrowLeft',' ','PageDown','PageUp','Home'].includes(event.key)) return;
+    event.preventDefault();
+    if (window.parent !== window) {
+      window.top.postMessage({ type:'nav_keydown', key:event.key }, '*');
+      return;
+    }
+    if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'PageDown') {
+      setBuild(Math.min(1, buildStep + 1));
+    } else {
+      setBuild(Math.max(0, buildStep - 1));
+    }
+  });
+
+  window.addEventListener('wheel', event => {
+    if (Math.abs(event.deltaY) < 30) return;
+    if (window.parent !== window) window.top.postMessage({ type:'nav_wheel', deltaY:event.deltaY }, '*');
+    else setBuild(event.deltaY > 0 ? Math.min(1, buildStep + 1) : Math.max(0, buildStep - 1));
+  }, { passive:true });
+
+  setBuild(0);
+})();
+</script>
+</body>
+</html>
+</template>
+<template id="page-08" data-label="P08 核心团队与产业化执行力" data-build-limit="3"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 核心团队正式 BP 简化版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #050508;
+  --cyan: #00E5FF;
+  --blue: #4EA8DB;
+  --orange: #FF681A;
+  --green: #7EE787;
+  --text: #FFFFFF;
+  --muted: rgba(255,255,255,.61);
+  --line: rgba(255,255,255,.105);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+}
+
+.slide-canvas {
+  width: 90vw;
+  max-width: 1440px;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  padding: 30px 40px 22px;
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(0,229,255,.065), transparent 31%),
+    radial-gradient(circle at 74% 78%, rgba(255,104,26,.035), transparent 34%),
+    linear-gradient(145deg, #07101D 0%, #050508 68%, #060B12 100%);
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,.9);
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.017) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.48), transparent 82%);
+}
+
+.top-logo {
+  position: absolute;
+  width: 210px;
+  top: 8px;
+  right: 12px;
+  z-index: 5;
+}
+
+.header {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  min-height: 72px;
+  padding-right: 225px;
+}
+
+.header h1 {
+  font-size: 40px;
+  line-height: 1.16;
+  font-weight: 900;
+  letter-spacing: -.7px;
+}
+
+.header h1 strong { color: var(--cyan); }
+
+.groups {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.13fr;
+  gap: 14px;
+}
+
+.group {
+  --accent: var(--cyan);
+  --tint: rgba(0,229,255,.055);
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  border: 1px solid color-mix(in srgb, var(--accent) 27%, transparent);
+  border-top: 3px solid var(--accent);
+  background: linear-gradient(160deg, var(--tint), rgba(6,12,21,.96) 52%);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(18px) scale(.985);
+  pointer-events: none;
+  transition:
+    opacity .42s ease,
+    transform .42s cubic-bezier(.22,.78,.26,1);
+}
+
+body.build-1 .group.tech,
+body.build-2 .group.tech,
+body.build-2 .group.product,
+body.build-3 .group {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group { transition: none; }
+}
+
+.group.product {
+  --accent: var(--orange);
+  --tint: rgba(255,104,26,.055);
+}
+
+.group.commercial {
+  --accent: var(--green);
+  --tint: rgba(126,231,135,.045);
+}
+
+.group:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  z-index: 5;
+  right: -19px;
+  top: 54px;
+  width: 24px;
+  text-align: center;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 900;
+  color: rgba(255,255,255,.62);
+}
+
+.group-head {
+  flex-shrink: 0;
+  min-height: 68px;
+  padding: 11px 15px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  display: flex;
+  align-items: center;
+}
+
+.group-copy h2 {
+  font-size: 25px;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.members {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.member-row {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 13px;
+  border-bottom: 1px solid rgba(255,255,255,.085);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 5%, transparent), transparent 58%);
+}
+
+.member-row:last-child { border-bottom: none; }
+
+.member-row.founder {
+  background: linear-gradient(90deg, rgba(255,104,26,.15), rgba(255,104,26,.025) 72%);
+  box-shadow: inset 3px 0 0 var(--orange);
+}
+
+.portrait {
+  width: 100px;
+  height: 125px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  background-color: #0A0A0F;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center 16%;
+  box-shadow: 0 3px 12px rgba(0,0,0,.38);
+}
+
+.p-lin   { background-image: url('shared/media/头像_林佳奇_38ad5fc5.png'); }
+.p-lifan { background-image: url('shared/media/头像_李凡_ac27ab88.png'); background-position: center 12%; }
+.p-zuo   { background-image: url('shared/media/头像_左欣_66f0f684.png'); background-size: 120%; background-position: center 10%; }
+.p-song  { background-image: url('shared/media/头像_宋立婷_938fae91.png'); background-size: 150%; background-position: center 10%; }
+.p-wang  { background-image: url('shared/media/头像_王小宇_ea467ade.png'); background-position: center 15%; }
+.p-cai   { background-image: url('shared/media/头像_蔡翘楚_b195f1c0.png'); background-position: center 18%; }
+.p-li    { background-image: url('shared/media/头像_李论_2f81cb39.png'); background-position: center 22%; }
+.p-jiang { background-image: url('shared/media/头像_姜文华_9d65aefe.png'); background-position: center 20%; }
+.p-bi    { background-image: url('shared/media/头像_毕晓健_498eef62.png'); background-position: center 15%; }
+.p-jin   { background-image: url('shared/media/头像_金玉文_9452c447.png'); background-position: center 18%; }
+
+.member-copy {
+  min-width: 0;
+  height: 125px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.capability {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+  margin-top: auto;
+  padding-top: 5px;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  white-space: nowrap;
+}
+
+.capability-no {
+  flex-shrink: 0;
+  min-width: 22px;
+  font-size: 12.5px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: color-mix(in srgb, var(--accent) 70%, rgba(255,255,255,.45));
+}
+
+.capability strong {
+  flex-shrink: 0;
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: .3px;
+  color: var(--accent);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.capability-note {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.14;
+  font-weight: 800;
+  color: rgba(255,255,255,.78);
+}
+
+.identity {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  min-height: 23px;
+}
+
+.identity h3 {
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.identity h3 small {
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(255,255,255,.68);
+}
+
+.identity span {
+  font-size: 14px;
+  line-height: 1.16;
+  font-weight: 850;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.wins {
+  list-style: none;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wins li {
+  position: relative;
+  padding-left: 12px;
+  font-size: 13.5px;
+  line-height: 1.18;
+  font-weight: 760;
+  color: rgba(255,255,255,.76);
+}
+
+.wins li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.commercial .member-row {
+  grid-template-columns: 90px 1fr;
+  gap: 9px;
+  padding: 8px 12px;
+}
+
+.commercial .portrait {
+  width: 90px;
+  height: 112px;
+}
+
+.commercial .member-copy { height: 112px; }
+.commercial .capability { gap: 6px; padding-top: 4px; }
+.commercial .capability-no { min-width: 20px; font-size: 11.5px; }
+.commercial .capability strong { font-size: 21px; }
+.commercial .capability-note { font-size: 13.5px; }
+.commercial .identity { min-height: 20px; }
+.commercial .identity h3 { font-size: 18px; }
+.commercial .identity h3 small { font-size: 12px; }
+.commercial .identity span { font-size: 13px; }
+.commercial .wins { margin-top: 4px; gap: 3px; }
+.commercial .wins li { font-size: 12.5px; line-height: 1.18; }
+
+</style>
+</head>
+<body>
+<main class="slide-canvas">
+  <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse">
+
+  <header class="header">
+    <h1>核心团队与<strong>产业化执行力</strong></h1>
+  </header>
+
+  <section class="groups">
+    <article class="group tech">
+      <header class="group-head">
+        <div class="group-copy">
+          <h2>关键技术与核心壁垒</h2>
+        </div>
+      </header>
+      <div class="members">
+        <section class="member-row">
+          <div class="portrait p-lin"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>林佳奇<small>教授</small></h3><span>电极材料技术负责人</span></div>
+            <ul class="wins"><li>国家级柔性生物材料项目负责人</li><li>MIT 双博后 · 前 BrainCo 研发总监</li></ul>
+            <div class="capability"><span class="capability-no">01</span><strong>采得稳</strong><span class="capability-note">长期佩戴仍保持信号稳定</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-lifan"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>李凡<small>博士</small></h3><span>睡眠产品技术负责人</span></div>
+            <ul class="wins"><li>第一发明人 4 项专利 · OSA 初筛已转化</li><li>Donders 博后 · 国家重点研发课题骨干</li></ul>
+            <div class="capability"><span class="capability-no">02</span><strong>测得准</strong><span class="capability-note">把睡眠监测做成院外产品</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-zuo"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>左欣<small>博士</small></h3><span>算法总统筹</span></div>
+            <ul class="wins"><li>芬兰博士 · 国家海外博后引进人才</li><li>分心算法发表于智能交通国际顶刊</li></ul>
+            <div class="capability"><span class="capability-no">03</span><strong>解得出</strong><span class="capability-note">脑电信号处理与注意力解码</span></div>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <article class="group product">
+      <header class="group-head">
+        <div class="group-copy">
+          <h2>产品系统与工程交付</h2>
+        </div>
+      </header>
+      <div class="members">
+        <section class="member-row">
+          <div class="portrait p-song"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>宋立婷<small>博士</small></h3><span>产品工业设计负责人</span></div>
+            <ul class="wins"><li>认知科学博士 · 融合神经科学与设计</li><li>主导脑电穿戴形态 · 国家级设计奖</li></ul>
+            <div class="capability"><span class="capability-no">04</span><strong>戴得住</strong><span class="capability-note">整夜佩戴与院外场景适配</span></div>
+          </div>
+        </section>
+        <section class="member-row founder">
+          <div class="portrait p-wang"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>王小宇<small>博士</small></h3><span>创始人 CEO</span></div>
+            <ul class="wins"><li>Owen Lab 博后 · 主持国家级课题</li><li>独立开发 EEGFlow 脑电分析平台</li></ul>
+            <div class="capability"><span class="capability-no">05</span><strong>管得了</strong><span class="capability-note">牵引科研、算法、平台到产品</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-cai"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>蔡翘楚</h3><span>产品与供应链负责人</span></div>
+            <ul class="wins"><li>机械硕士 · 硬科技产品负责人</li><li>2 款产品完成 CE · 相关产品 3 年销售破亿</li></ul>
+            <div class="capability"><span class="capability-no">06</span><strong>交得出</strong><span class="capability-note">样机、认证、量产与供应链</span></div>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <article class="group commercial">
+      <header class="group-head">
+        <div class="group-copy">
+          <h2>商业运营与规模复制</h2>
+        </div>
+      </header>
+      <div class="members">
+        <section class="member-row">
+          <div class="portrait p-li"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>李论<small>博士</small></h3><span>首席市场官</span></div>
+            <ul class="wins"><li>信息技术博士 · 科技公司项目经理</li><li>覆盖产品研发、市场推广与渠道运营</li></ul>
+            <div class="capability"><span class="capability-no">07</span><strong>卖得动</strong><span class="capability-note">把技术语言转成客户需求与 POC</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-jiang"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>姜文华</h3><span>首席运营官</span></div>
+            <ul class="wins"><li>20+ 年跨国企业管理与战略销售</li><li>管理近亿美元业务 · 主导并购战略</li></ul>
+            <div class="capability"><span class="capability-no">08</span><strong>进得去</strong><span class="capability-note">打通医院与睡眠中心决策体系</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-bi"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>毕晓健</h3><span>首席战略官</span></div>
+            <ul class="wins"><li>20+ 年新材料经验 · 企业联合创始人</li><li>董事会秘书 · 主导投融资、资本与治理</li></ul>
+            <div class="capability"><span class="capability-no">09</span><strong>治得稳</strong><span class="capability-note">融资治理与产业资源配置</span></div>
+          </div>
+        </section>
+        <section class="member-row">
+          <div class="portrait p-jin"></div>
+          <div class="member-copy">
+            <div class="identity"><h3>金玉文</h3><span>组织与项目运营负责人</span></div>
+            <ul class="wins"><li>管理 60 人科研团队（20 教师＋40 博士生）</li><li>负责项目规划、执行与绩效体系设计</li></ul>
+            <div class="capability"><span class="capability-no">10</span><strong>跑得顺</strong><span class="capability-note">保障跨团队项目按节点推进</span></div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </section>
+
+</main>
+<script>
+let standaloneBuild = 0;
+
+function setBuild(step) {
+  const safe = Math.max(0, Math.min(3, Number(step) || 0));
+  standaloneBuild = safe;
+  document.body.className = 'build-' + safe;
+  document.querySelectorAll('.group').forEach((group, index) => {
+    group.setAttribute('aria-hidden', index >= safe ? 'true' : 'false');
+  });
+}
+
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'set_build') setBuild(event.data.step);
+});
+
+document.addEventListener('click', () => {
+  if (window.parent === window) setBuild((standaloneBuild + 1) % 4);
+  else window.top.postMessage({ type: 'nav_keydown', key: 'ArrowRight' }, '*');
+});
+
+window.addEventListener('keydown', (event) => {
+  if (!['ArrowRight', 'ArrowLeft', ' ', 'PageDown', 'PageUp', 'Home'].includes(event.key)) return;
+  event.preventDefault();
+  if (window.parent !== window) {
+    window.top.postMessage({ type: 'nav_keydown', key: event.key }, '*');
+    return;
+  }
+  if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'PageDown') {
+    setBuild(Math.min(3, standaloneBuild + 1));
+  } else {
+    setBuild(Math.max(0, standaloneBuild - 1));
+  }
+});
+
+window.addEventListener('wheel', (event) => {
+  if (Math.abs(event.deltaY) < 30) return;
+  if (window.parent !== window) window.top.postMessage({ type: 'nav_wheel', deltaY: event.deltaY }, '*');
+  else setBuild(event.deltaY > 0 ? Math.min(3, standaloneBuild + 1) : Math.max(0, standaloneBuild - 1));
+}, { passive: true });
+
+setBuild(0);
+</script>
+</body>
+</html>
+</template>
+<template id="page-09" data-label="P09 从工业安全到神经重症"><!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NeoPulse｜从工业安全到神经重症</title>
+  <style>
+    @font-face {
+      font-family: "思源黑体";
+      src: url("shared/fonts/noto-sc-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "思源黑体";
+      src: url("shared/fonts/noto-sc-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "思源黑体";
+      src: url("shared/fonts/noto-sc-900.woff2") format("woff2");
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #02070d;
+      --panel: rgba(5, 17, 27, 0.82);
+      --line: rgba(92, 196, 235, 0.28);
+      --line-soft: rgba(92, 196, 235, 0.15);
+      --white: #ffffff;
+      --muted: rgba(226, 242, 250, 0.68);
+      --cyan: #57ddf2;
+      --blue: #5e9cff;
+      --green: #8ce586;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body {
+      position: relative;
+      color: var(--white);
+      font-family: "思源黑体", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .canvas {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1440px;
+      height: 810px;
+      overflow: hidden;
+      isolation: isolate;
+      transform-origin: center center;
+      background:
+        radial-gradient(circle at 76% 24%, rgba(0, 152, 197, 0.12), transparent 38%),
+        radial-gradient(circle at 14% 72%, rgba(38, 101, 173, 0.10), transparent 32%),
+        linear-gradient(145deg, #07121e 0%, #02070d 56%, #06121d 100%);
+    }
+
+    .canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.36;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(109, 198, 226, 0.024) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(109, 198, 226, 0.021) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.35) 78%, transparent 100%);
+    }
+
+    .top-logo {
+      position: absolute;
+      top: 9px;
+      right: 12px;
+      width: 210px;
+      z-index: 20;
+    }
+
+    .header {
+      position: absolute;
+      left: 40px;
+      top: 24px;
+      right: 250px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header h1 {
+      color: #fff;
+      font-size: 37px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.032em;
+      white-space: nowrap;
+    }
+
+    .header h1 strong {
+      color: var(--cyan);
+      font-weight: 900;
+    }
+
+    .strategy {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 88px;
+      height: 58px;
+      display: grid;
+      grid-template-columns: 29% 31% 40%;
+      border: 1px solid rgba(87, 221, 242, 0.30);
+      background: rgba(4, 16, 26, 0.82);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    }
+
+    .strategy-step {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+      padding: 0 20px;
+    }
+
+    .strategy-step + .strategy-step {
+      border-left: 1px solid rgba(87, 221, 242, 0.22);
+    }
+
+    .strategy-step::after {
+      content: "›";
+      position: absolute;
+      right: -14px;
+      top: 4px;
+      z-index: 4;
+      color: var(--cyan);
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 400;
+      text-shadow: 0 0 16px rgba(87, 221, 242, 0.34);
+    }
+
+    .strategy-step:last-child::after {
+      display: none;
+    }
+
+    .strategy-icon {
+      flex: 0 0 auto;
+      width: 42px;
+      color: var(--cyan);
+      font-size: 29px;
+      line-height: 1;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .strategy-step:last-child .strategy-icon {
+      color: var(--green);
+    }
+
+    .strategy-copy {
+      min-width: 0;
+    }
+
+    .strategy-copy b {
+      display: block;
+      color: var(--cyan);
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .strategy-step:nth-child(2) .strategy-copy b {
+      color: #d9ecff;
+    }
+
+    .strategy-step:last-child .strategy-copy b {
+      color: var(--green);
+    }
+
+    .strategy-copy span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(226, 242, 250, 0.62);
+      font-size: 11.5px;
+      line-height: 1.2;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .main {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 158px;
+      height: 404px;
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .asset-column {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      background: rgba(4, 14, 23, 0.68);
+    }
+
+    .panel-title {
+      height: 30px;
+      color: var(--cyan);
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .asset-list {
+      height: 348px;
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .asset-item {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 54% 46%;
+      overflow: hidden;
+      border: 1px solid rgba(92, 196, 235, 0.24);
+      background: linear-gradient(145deg, rgba(12, 33, 47, 0.78), rgba(5, 18, 29, 0.65));
+    }
+
+    .asset-item::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      opacity: 0.75;
+      background: linear-gradient(90deg, var(--blue), transparent 72%);
+    }
+
+    .asset-item:nth-child(2)::after {
+      background: linear-gradient(90deg, var(--cyan), transparent 72%);
+    }
+
+    .asset-item:nth-child(3)::after {
+      background: linear-gradient(90deg, var(--green), transparent 72%);
+    }
+
+    .asset-item figure {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      background: #030b11;
+    }
+
+    .asset-item img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: saturate(0.92) brightness(0.88) contrast(1.04);
+    }
+
+    .asset-item.electrode img {
+      object-position: center 58%;
+    }
+
+    .asset-item.eegflow img {
+      object-position: 50% 50%;
+    }
+
+    .asset-item.terminal img {
+      object-position: 72% 50%;
+    }
+
+    .asset-copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px 8px 10px 12px;
+    }
+
+    .asset-copy h3 {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .asset-copy p {
+      margin-top: 8px;
+      color: rgba(228, 244, 251, 0.70);
+      font-size: 11.5px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .clinical-column {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .clinical-visual {
+      position: relative;
+      height: 282px;
+      overflow: hidden;
+      border: 1px solid rgba(92, 196, 235, 0.32);
+      background: #04101a;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.30);
+    }
+
+    .clinical-visual > img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(0.90) brightness(0.87) contrast(1.06);
+    }
+
+    .future-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      height: 29px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border: 1px solid rgba(140, 229, 134, 0.42);
+      background: rgba(3, 18, 20, 0.84);
+      color: rgba(213, 250, 218, 0.94);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .stage-captions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 88px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: linear-gradient(180deg, transparent 0%, rgba(2, 8, 14, 0.72) 26%, rgba(2, 8, 14, 0.96) 100%);
+    }
+
+    .stage-caption {
+      position: relative;
+      min-width: 0;
+      padding: 25px 14px 8px 49px;
+    }
+
+    .stage-caption + .stage-caption {
+      border-left: 1px solid rgba(145, 211, 238, 0.25);
+    }
+
+    .stage-number {
+      position: absolute;
+      left: 15px;
+      top: 28px;
+      color: var(--blue);
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+    }
+
+    .stage-caption:nth-child(2) .stage-number {
+      color: var(--cyan);
+    }
+
+    .stage-caption:nth-child(3) .stage-number {
+      color: var(--green);
+    }
+
+    .stage-caption h2 {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .stage-caption p {
+      margin-top: 5px;
+      color: rgba(226, 242, 250, 0.72);
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pipeline {
+      height: 112px;
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 26px 1fr 26px 1fr;
+      align-items: stretch;
+    }
+
+    .pipeline-node {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 0 15px;
+      border: 1px solid rgba(92, 196, 235, 0.24);
+      background: linear-gradient(145deg, rgba(12, 35, 49, 0.74), rgba(5, 18, 29, 0.62));
+    }
+
+    .pipeline-icon {
+      color: var(--blue);
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .pipeline-node:nth-child(3) .pipeline-icon {
+      color: var(--cyan);
+    }
+
+    .pipeline-node:nth-child(5) .pipeline-icon {
+      color: var(--green);
+    }
+
+    .pipeline-copy b {
+      display: block;
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .pipeline-copy span {
+      display: block;
+      margin-top: 7px;
+      color: rgba(226, 242, 250, 0.64);
+      font-size: 10.8px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .pipeline-arrow {
+      display: grid;
+      place-items: center;
+      color: rgba(87, 221, 242, 0.78);
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .research {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 574px;
+      height: 171px;
+      display: grid;
+      grid-template-columns: 222px repeat(3, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line-soft);
+      background: linear-gradient(90deg, rgba(4, 17, 27, 0.92), rgba(4, 14, 23, 0.76));
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .research-intro {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 14px 16px;
+      border-right: 1px solid rgba(92, 196, 235, 0.20);
+      background: radial-gradient(circle at 18% 22%, rgba(87, 221, 242, 0.11), transparent 58%);
+    }
+
+    .research-kicker {
+      color: var(--cyan);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .research-intro h2 {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 19px;
+      line-height: 1.27;
+      font-weight: 900;
+      letter-spacing: -0.015em;
+    }
+
+    .research-intro p {
+      margin-top: 10px;
+      color: rgba(218, 238, 248, 0.58);
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .research-stage {
+      position: relative;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 13px 9px;
+    }
+
+    .research-stage + .research-stage {
+      border-left: 1px solid rgba(92, 196, 235, 0.18);
+    }
+
+    .research-figure {
+      position: relative;
+      height: 87px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-bottom: 2px solid var(--blue);
+      background: #04101a;
+    }
+
+    .research-stage:nth-child(3) .research-figure {
+      border-bottom-color: var(--cyan);
+    }
+
+    .research-stage:nth-child(4) .research-figure {
+      border-bottom-color: var(--green);
+    }
+
+    .research-figure::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent 54%, rgba(2, 10, 17, 0.30));
+      box-shadow: inset 0 0 0 1px rgba(153, 216, 239, 0.12);
+    }
+
+    .research-figure img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center 43%;
+      opacity: 0.92;
+      filter: invert(1) hue-rotate(180deg) saturate(1.35) brightness(0.78) contrast(1.08);
+    }
+
+    .research-stage:nth-child(3) .research-figure img {
+      object-position: center 49%;
+    }
+
+    .research-stage:nth-child(4) .research-figure img {
+      object-position: center 47%;
+    }
+
+    .research-stage-copy {
+      position: relative;
+      min-width: 0;
+      margin-top: 8px;
+      padding-left: 34px;
+    }
+
+    .research-index {
+      position: absolute;
+      left: 0;
+      top: 2px;
+      color: var(--blue);
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+
+    .research-stage:nth-child(3) .research-index {
+      color: var(--cyan);
+    }
+
+    .research-stage:nth-child(4) .research-index {
+      color: var(--green);
+    }
+
+    .research-stage-copy h3 {
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.18;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .research-stage-copy p {
+      margin-top: 5px;
+      color: rgba(218, 238, 248, 0.65);
+      font-size: 10.5px;
+      line-height: 1.3;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .boundary {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 753px;
+      height: 29px;
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr) 286px;
+      overflow: hidden;
+      border: 1px solid rgba(140, 229, 134, 0.30);
+      background: linear-gradient(90deg, rgba(9, 33, 47, 0.90), rgba(5, 25, 29, 0.84));
+    }
+
+    .boundary-label,
+    .boundary-copy,
+    .platform-value {
+      display: flex;
+      align-items: center;
+    }
+
+    .boundary-label {
+      justify-content: center;
+      border-right: 1px solid rgba(140, 229, 134, 0.22);
+      color: var(--green);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .boundary-copy {
+      padding: 0 14px;
+      color: rgba(230, 246, 252, 0.82);
+      font-size: 11.5px;
+      line-height: 1.35;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .boundary-copy strong {
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .platform-value {
+      padding: 0 14px;
+      border-left: 1px solid rgba(140, 229, 134, 0.18);
+      color: rgba(213, 250, 218, 0.90);
+      font-size: 11.5px;
+      line-height: 1.35;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <main class="canvas" aria-label="从工业安全到神经重症的统一脑状态底座">
+    <img class="top-logo" src="shared/media/品牌_品牌Logo_817ee914.svg" alt="NeoPulse">
+
+    <header class="header">
+      <h1>从工业安全到神经重症：<strong>同一脑状态底座，扩展至患者全病程</strong></h1>
+    </header>
+
+    <section class="strategy" aria-label="平台扩展战略">
+      <div class="strategy-step">
+        <div class="strategy-icon">▥</div>
+        <div class="strategy-copy">
+          <b>工业安全（第一商业入口）</b>
+          <span>工程化验证 · 真实世界数据 · 商业闭环</span>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="strategy-icon">▰</div>
+        <div class="strategy-copy">
+          <b>统一脑状态技术底座</b>
+          <span>采集 · 质控 · 解码 · 纵向建模</span>
+        </div>
+      </div>
+      <div class="strategy-step">
+        <div class="strategy-icon">♡</div>
+        <div class="strategy-copy">
+          <b>神经重症与意识障碍全病程扩展</b>
+          <span>院前转运 → 神经 ICU → 慢性意识障碍</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="main">
+      <aside class="asset-column">
+        <h2 class="panel-title">可复用的核心资产</h2>
+        <div class="asset-list">
+          <article class="asset-item electrode">
+            <figure><img src="shared/media/产品_电极材料示意图_888f67eb.png" alt="水凝胶电极"></figure>
+            <div class="asset-copy">
+              <h3>水凝胶电极</h3>
+              <p>快速贴附<br>长时稳定采集<br>低阻抗 · 高舒适</p>
+            </div>
+          </article>
+          <article class="asset-item eegflow">
+            <figure><img src="shared/media/界面_EEGFlow平台卡片_98f87186.png" alt="EEGFlow平台"></figure>
+            <div class="asset-copy">
+              <h3>EEGFlow</h3>
+              <p>采集与质控<br>AI 解码引擎<br>纵向脑状态档案</p>
+            </div>
+          </article>
+          <article class="asset-item terminal">
+            <figure><img src="shared/media/产品_platform_doc_headgear_5de9e378.png" alt="模块化脑电终端"></figure>
+            <div class="asset-copy">
+              <h3>模块化终端</h3>
+              <p>统一采集平台<br>场景化导联<br>可扩展刺激模块</p>
+            </div>
+          </article>
+        </div>
+      </aside>
+
+      <section class="clinical-column" aria-label="远期患者全病程延伸">
+        <div class="clinical-visual">
+          <!-- AI-generated scene asset; labels and evidence boundaries remain editable HTML. -->
+          <img src="shared/media/示意图_临床场景_院前转运神经重症意识障碍_6be491e0.png" alt="院前转运、神经重症与慢性意识障碍三阶段临床场景">
+          <div class="future-tag">远期方向｜按场景独立验证与准入</div>
+          <div class="stage-captions">
+            <article class="stage-caption">
+              <span class="stage-number">01</span>
+              <h2>院前急救／救护转运</h2>
+              <p>快速部署 · 连续脑功能监测 · 数据接续</p>
+            </article>
+            <article class="stage-caption">
+              <span class="stage-number">02</span>
+              <h2>神经 ICU 急性期</h2>
+              <p>睡眠—觉醒节律 · 脑反应性 · 动态分层</p>
+            </article>
+            <article class="stage-caption">
+              <span class="stage-number">03</span>
+              <h2>慢性意识障碍阶段</h2>
+              <p>状态评估 · 隐匿认知 · BCI 交流 · 干预追踪</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="pipeline" aria-label="统一数据与算法闭环">
+          <div class="pipeline-node">
+            <div class="pipeline-icon">≋</div>
+            <div class="pipeline-copy"><b>统一数据流</b><span>连续脑电数据<br>跨阶段无缝接续</span></div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">
+            <div class="pipeline-icon">◉</div>
+            <div class="pipeline-copy"><b>AI 算法引擎</b><span>个体基线 · 纵向建模<br>响应评估 · 风险预测</span></div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">
+            <div class="pipeline-icon">↻</div>
+            <div class="pipeline-copy"><b>反馈与干预闭环</b><span>评估 → 决策 → 干预 → 复测<br>持续追踪脑功能变化</span></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="research" aria-label="从反应检测到行为外认知与纵向追踪的研究能力">
+      <div class="research-intro">
+        <span class="research-kicker">科研能力底座</span>
+        <h2>从反应检测，到行为外认知与纵向追踪</h2>
+        <p>真实组水平结果｜仅证明研究与算法储备</p>
+      </div>
+
+      <!-- Internal canonical Test–Retest SEAP group-level figures; no participant identity is displayed. -->
+      <article class="research-stage">
+        <figure class="research-figure">
+          <img src="shared/media/证据_脑反应可检测性_028b6bc9.png" alt="组水平脑反应检测与跨次一致性科研结果">
+        </figure>
+        <div class="research-stage-copy">
+          <span class="research-index">01</span>
+          <h3>脑是否产生可重复反应？</h3>
+          <p>ASSR／ERP／MMN｜听觉通路与自动偏差反应</p>
+        </div>
+      </article>
+
+      <article class="research-stage">
+        <figure class="research-figure">
+          <img src="shared/media/证据_脑反应个体识别_自己的名字_9effd2ed.png" alt="自己的名字反应与被动认知范式科研结果">
+        </figure>
+        <div class="research-stage-copy">
+          <span class="research-index">02</span>
+          <h3>是否存在行为外认知线索？</h3>
+          <p>名字反应／语义／指令跟随｜个体化加工证据</p>
+        </div>
+      </article>
+
+      <article class="research-stage">
+        <figure class="research-figure">
+          <img src="shared/media/证据_脑反应跨次识别稳定性_c23aa6f3.png" alt="跨次脑反应稳定性与纵向追踪科研结果">
+        </figure>
+        <div class="research-stage-copy">
+          <span class="research-index">03</span>
+          <h3>能否持续交互与纵向追踪？</h3>
+          <p>BCI／睡眠节律／Test–Retest｜状态变化评估</p>
+        </div>
+      </article>
+    </section>
+
+    <footer class="boundary">
+      <div class="boundary-label">验证边界</div>
+      <div class="boundary-copy"><strong>复用：</strong>采集、质控、算法与平台　　<strong>重验：</strong>病种、阈值、临床终点与合规准入</div>
+      <div class="platform-value">平台价值｜监测 → 评估 → 交互 → 干预</div>
+    </footer>
+  </main>
+
+  <script>
+    function fitCanvas() {
+      const canvas = document.querySelector(".canvas");
+      const scale = Math.min(1, window.innerWidth / 1440, window.innerHeight / 810);
+      canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    }
+
+    window.addEventListener("resize", fitCanvas);
+    fitCanvas();
+  </script>
+</body>
+</html>
+</template>
+<template id="page-10" data-label="P10 战略路径"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - 意识连续谱平台架构 v2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --bg-base: #050508;
+            --ocean-dark: #0A1118;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            /* Node Colors - 5 states from awake to coma */
+            --node-cognitive: #00E676;   /* 新增 清醒-认知 绿色 */
+            --node-fatigue: #00E5FF;
+            --node-sleep: #2979FF;
+            --node-anesthesia: #B388FF;
+            --node-coma: #3949AB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px;
+        }
+
+        /* HEADER */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;
+            z-index: 100; position: relative;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size:38px; font-weight:800; color:#FFFFFF; }
+        .title-block p  { font-size:20px; color: var(--ice-cyan); font-weight:600; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* MAIN ARCHITECTURE SVG */
+        .flow-connections {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+        }
+
+        /* GRID ARCHITECTURE */
+        .arch-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            grid-template-rows: 1fr 2px 1fr 2px 1fr;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .layer-label {
+            font-size: 26px; font-weight: 700; color: #FFF;
+            display: flex; flex-direction: column; justify-content: center;
+            border-right: 4px solid var(--ice-bright);
+            padding-right: 15px; padding-left: 15px; text-align: center;
+            height: 70%;
+        }
+
+        .divider {
+            grid-column: 1 / -1; height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(78, 168, 219, 0.3) 15%, rgba(78, 168, 219, 0.1) 90%, transparent 100%);
+            width: 100%;
+        }
+
+        /* TRACKS - 5 column equal distribution */
+        .track {
+            display: flex; align-items: center; width: 100%; height: 100%;
+            padding-left: 20px; padding-right: 20px;
+        }
+
+        .all-zone {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            position: relative;
+        }
+
+        /* LAYER 3: APPS */
+        .app-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid transparent;
+            border-radius: 12px;
+            padding: 22px 18px;
+            width: 23%;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 5;
+        }
+        .app-block:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+
+        .app-block h4 { font-size: 18px; color: #FFF; font-weight: 750; margin-bottom: 12px; white-space: nowrap;}
+
+        .app-block ul { list-style: none; text-align: left; padding: 0; width: 100%; }
+        .app-block ul li {
+            font-size: 13.2px; color: var(--text-muted); line-height: 1.55;
+            position: relative; padding-left: 12px; margin-bottom: 5px;
+        }
+        .app-block ul li::before {
+            content: '·'; position: absolute; left: 0; font-weight: 900; color: inherit; font-size: 15px;
+            top: -2px;
+        }
+
+        .day-night-loop {
+            position: absolute;
+            left: calc(23% + 1.35%);
+            top: 22%;
+            width: 52px;
+            height: 52px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 12;
+            opacity: 0.9;
+        }
+        .day-night-loop path {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 7px rgba(0, 229, 255, 0.45));
+            transform-origin: center;
+            animation: spin 7s linear infinite;
+        }
+        .loop-caption {
+            position: absolute;
+            left: calc(23% + 1.35%);
+            top: calc(22% + 38px);
+            transform: translateX(-50%);
+            z-index: 13;
+            pointer-events: none;
+            color: rgba(0, 229, 255, 0.82);
+            font-size: 14.5px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: 1px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            width: 18px;
+            overflow: visible;
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.35), 0 0 8px var(--bg-base);
+        }
+
+        /* NEW CARD SUB-ELEMENTS */
+        .card-inner {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            justify-content: flex-start;
+            align-items: stretch;
+            position: relative;
+            z-index: 2;
+        }
+        .card-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-width: 0;
+        }
+        .state-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 13px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: currentColor;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        .state-icon svg { width: 100%; height: 100%; }
+
+        .card-tag {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 13px;
+            width: fit-content;
+            letter-spacing: 0.5px;
+        }
+        .tag-first {
+            background: rgba(0, 229, 255, 0.12);
+            color: #00E5FF;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+        .tag-verify {
+            background: rgba(41, 121, 255, 0.12);
+            color: #2979FF;
+            border: 1px solid rgba(41, 121, 255, 0.25);
+        }
+        .tag-model {
+            background: rgba(0, 229, 255, 0.08);
+            color: #4EA8DB;
+            border: 1px solid rgba(78, 168, 219, 0.25);
+        }
+        .tag-medical {
+            background: rgba(179, 136, 255, 0.08);
+            color: #B388FF;
+            border: 1px solid rgba(179, 136, 255, 0.25);
+        }
+        .tag-coma {
+            background: rgba(57, 73, 171, 0.10);
+            color: #6E7CFF;
+            border: 1px solid rgba(57, 73, 171, 0.25);
+        }
+
+        .app-block.medical-dim {
+            opacity: 0.94;
+            border-style: dashed;
+            border-width: 1px;
+            background: rgba(255, 255, 255, 0.035);
+        }
+        .app-block.medical-dim:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* LAYER 2: DECODE */
+        .decode-capsule {
+            width: 100%; height: 110px;
+            background: linear-gradient(90deg,
+                rgba(0, 230, 118, 0.05),
+                rgba(0, 229, 255, 0.08),
+                rgba(41, 121, 255, 0.10),
+                rgba(179, 136, 255, 0.08),
+                rgba(57, 73, 171, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            border-radius: 60px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0, 229, 255, 0.1), 0 0 50px rgba(0, 229, 255, 0.1);
+            position: relative; overflow: hidden;
+            z-index: 5;
+        }
+        .decode-capsule::before {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ice-bright), transparent);
+        }
+
+        .eeg-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; opacity: 0.6; z-index: 1; mix-blend-mode: screen;
+        }
+        .wave-path {
+            fill: none; stroke-linecap: round; stroke-linejoin: round;
+            animation: drift var(--speed) linear infinite;
+        }
+        @keyframes drift {
+            from { stroke-dashoffset: var(--dash-len); }
+            to { stroke-dashoffset: 0; }
+        }
+
+        .decode-content {
+            z-index: 10; display: flex; flex-direction: column; align-items: center;
+            background: rgba(5,5,8,0.4); padding: 10px 40px; border-radius: 40px; backdrop-filter: blur(5px);
+        }
+        .decode-content h3 {
+            font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.8); margin-bottom: 6px;
+        }
+        .decode-content h3 .brand {
+            color: var(--ice-bright);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-family: 'Inter', sans-serif;
+            margin-right: 6px;
+            text-shadow: 0 0 18px rgba(0, 229, 255, 0.9);
+        }
+        .decode-content .subtitle {
+            font-size: 16px; color: var(--ice-bright); font-weight: 650; letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* LAYER 1: STATE SPECTRUM */
+        .spectrum-track .track-content {
+            width: 100%; display: flex; position: relative; height: 100%; align-items: center;
+            padding: 0 20px;
+        }
+
+        .spectrum-svg {
+            position: absolute; left: 0; right: 0; top: 0; bottom: 0; width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .s-node {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; z-index: 5;
+        }
+
+        .dot {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 4px solid var(--bg-base); box-shadow: 0 0 15px currentColor;
+        }
+        .n-text { font-size: 16px; font-weight: 600; color: #FFF; margin-top: 18px; white-space: nowrap; }
+        .n-sub { display: none; }
+
+        /* Strong text shadow to prevent line collision clutter */
+        .n-text, .n-sub {
+            text-shadow: 0 0 10px var(--bg-base), 0 0 5px var(--bg-base), 0 0 2px var(--bg-base);
+        }
+
+        .s-node.cognitive { color: var(--node-cognitive); }
+        .s-node.fatigue { color: var(--node-fatigue); }
+        .s-node.sleep { color: var(--node-sleep); }
+        .s-node.anesthesia { color: var(--node-anesthesia); }
+        .s-node.coma { color: var(--node-coma); }
+
+        /* Spectrum axis caption */
+        .axis-caption {
+            position: absolute; bottom: -2px; right: 20px;
+            font-size: 10px; color: rgba(255,255,255,0.3);
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        /* === Spectrum non-linear layout overrides === */
+        .spectrum-track .all-zone {
+            display: block;
+            position: relative;
+            height: 100%;
+        }
+        /* S-node anchored at line; dot truly centered on line, text flows below */
+        .spectrum-track .s-node {
+            position: absolute;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .spectrum-track .s-node .dot {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .spectrum-track .s-node .n-text {
+            margin-top: 22px;
+        }
+        /* Non-linear spacing and curved heights - S-curve sigmoid coordinates */
+        .spectrum-track .s-node.cognitive  { left: 4%;  top: 18%; }
+        .spectrum-track .s-node.fatigue    { left: 22%; top: 26%; }
+        .spectrum-track .s-node.sleep      { left: 44%; top: 49%; }
+        .spectrum-track .s-node.anesthesia { left: 72%; top: 77%; }
+        .spectrum-track .s-node.coma       { left: 96%; top: 86%; }
+        /* Node size gradient — decreasing with consciousness level */
+        .s-node.cognitive  .dot { width: 26px; height: 26px; }
+        .s-node.fatigue    .dot { width: 22px; height: 22px; }
+        .s-node.sleep      .dot { width: 20px; height: 20px; }
+        .s-node.anesthesia .dot { width: 16px; height: 16px; }
+        .s-node.coma       .dot { width: 13px; height: 13px; }
+
+        /* Product markers label only (gradient columns are moved to SVG) */
+        .product-marker-label {
+            position: absolute;
+            bottom: 12px;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(0, 229, 255, 0.92);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 14px rgba(0, 229, 255, 0.45);
+            z-index: 2;
+        }
+
+        /* Layer sublabel under titles */
+        .layer-label .layer-main { display: block; margin-bottom: 4px; }
+        .layer-label .layer-sublabel {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ice-cyan);
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+        .layer-label .layer-detail {
+            display: block;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 13px;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+
+        /* Flow Path Animations */
+        .flow-path {
+            stroke-dasharray: 10 15;
+            animation: none;
+        }
+        @keyframes flowDash {
+            to { stroke-dashoffset: -50; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-canvas" id="slideCanvas">
+
+        <!-- Animated Flow SVG across entire canvas -->
+        <svg class="flow-connections" id="flowSVG"></svg>
+
+        <!-- Header -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>战略路径</h1>
+                <p>一套全谱脑电底座，打通昼夜与临床</p>
+            </div>
+        </div>
+        <img src="shared/media/品牌_品牌Logo_817ee914.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- Horizontal Matrix Architecture -->
+        <div class="arch-grid">
+
+            <!-- LAYER 1: STATE SPECTRUM (TOP — 科学基础) -->
+            <div class="layer-label">
+                <span class="layer-main">脑状态谱系</span>
+                <span class="layer-sublabel">同一神经环路<span class="layer-detail">（丘脑-皮层环路）</span></span>
+            </div>
+            <div class="track spectrum-track">
+                <div class="track-content">
+                    <svg class="spectrum-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <defs>
+                            <!-- Line Gradient -->
+                            <linearGradient id="spectrumGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="var(--node-cognitive)" />
+                                <stop offset="25%" stop-color="var(--node-fatigue)" />
+                                <stop offset="50%" stop-color="var(--node-sleep)" />
+                                <stop offset="75%" stop-color="var(--node-anesthesia)" />
+                                <stop offset="100%" stop-color="var(--node-coma)" />
+                            </linearGradient>
+                            <!-- Vertical Gradient for Product Shadows -->
+                            <linearGradient id="markerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="rgba(0, 229, 255, 0.24)" />
+                                <stop offset="45%" stop-color="rgba(0, 229, 255, 0.10)" />
+                                <stop offset="100%" stop-color="rgba(0, 229, 255, 0)" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Product Marker 1 Gradient Area (left: 4% to 22%, matching curve path segment) -->
+                        <path d="M 4 18 C 10 18, 16 22, 22 26 L 22 90 L 4 90 Z" fill="url(#markerGrad)" />
+                        <!-- Product Marker 2 Gradient Area (left: 22% to 44%, matching curve path segment) -->
+                        <path d="M 22 26 C 30 30, 36 42, 44 49 L 44 90 L 22 90 Z" fill="url(#markerGrad)" />
+                        <!-- Continuous Sigmoid Arousal Curve -->
+                        <path d="M 2 18 C 35 18, 55 86, 98 86" fill="none" stroke="url(#spectrumGrad)" stroke-width="2.5" />
+                    </svg>
+
+                    <!-- Product markers labels only, centered horizontally -->
+                    <div class="product-marker-label" style="left: 13%;">白天｜疲劳预警</div>
+                    <div class="product-marker-label" style="left: 33%;">夜间｜睡眠改善</div>
+
+                    <div class="all-zone">
+                        <div class="s-node cognitive" id="node1">
+                            <div class="dot" style="background: var(--node-cognitive)"></div>
+                            <div class="n-text">清醒</div>
+                            <div class="n-sub">认知 · 情绪</div>
+                        </div>
+                        <div class="s-node fatigue" id="node2">
+                            <div class="dot" style="background: var(--node-fatigue)"></div>
+                            <div class="n-text">疲劳</div>
+                            <div class="n-sub">警觉性下降</div>
+                        </div>
+                        <div class="s-node sleep" id="node3">
+                            <div class="dot" style="background: var(--node-sleep)"></div>
+                            <div class="n-text">睡眠</div>
+                            <div class="n-sub">分期与诊断</div>
+                        </div>
+                        <div class="s-node anesthesia" id="node4">
+                            <div class="dot" style="background: var(--node-anesthesia)"></div>
+                            <div class="n-text">麻醉</div>
+                            <div class="n-sub">镇静深度</div>
+                        </div>
+                        <div class="s-node coma" id="node5">
+                            <div class="dot" style="background: var(--node-coma)"></div>
+                            <div class="n-text">昏迷</div>
+                            <div class="n-sub">意识障碍</div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Horizontal Divider -->
+            <div class="divider"></div>
+
+            <!-- LAYER 2: DECODE (MIDDLE — 技术内核) -->
+            <div class="layer-label">
+                <span class="layer-main">解码层</span>
+                <span class="layer-sublabel">同一脑电语言<span class="layer-detail">（脑电各频段）</span></span>
+            </div>
+            <div class="track">
+                <div class="all-zone">
+                    <div class="decode-capsule" id="decodeNode">
+                        <svg class="eeg-canvas" preserveAspectRatio="none" id="eegCanvas"></svg>
+                        <div class="decode-content">
+                            <h3><span class="brand">EEGFlow</span> · 全谱脑电基础模型</h3>
+                            <div class="subtitle">同一脑电特征底座 · 多场景数据回流 · 模型精度持续提升</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Divider -->
+            <div class="divider"></div>
+
+            <!-- LAYER 3: APPS (BOTTOM — 产业化路径) -->
+            <div class="layer-label">
+                <span class="layer-main">应用层</span>
+                <span class="layer-sublabel">连续可观察<span class="layer-detail">的状态过渡</span></span>
+            </div>
+            <div class="track">
+                <div class="all-zone">
+
+                    <svg class="day-night-loop" viewBox="0 0 24 24" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="dayNightLoopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="rgba(0, 229, 255, 0.75)" />
+                                <stop offset="100%" stop-color="rgba(41, 121, 255, 0.75)" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M21 12a9 9 0 0 1-15.5 6.2L3 15.8" stroke="url(#dayNightLoopGrad)" stroke-width="1.7" />
+                        <path d="M3 21v-5.2h5.2" stroke="rgba(0, 229, 255, 0.75)" stroke-width="1.7" />
+                        <path d="M3 12A9 9 0 0 1 18.5 5.8L21 8.2" stroke="url(#dayNightLoopGrad)" stroke-width="1.7" />
+                        <path d="M21 3v5.2h-5.2" stroke="rgba(41, 121, 255, 0.75)" stroke-width="1.7" />
+                    </svg>
+                    <div class="loop-caption">白加黑传递函数</div>
+
+                    <!-- App 1: Fatigue -->
+                    <div class="app-block" style="border-top-color: var(--node-fatigue);" id="app1">
+                        <div class="card-inner">
+                            <div class="card-text" style="color: var(--node-fatigue);">
+                                <div class="state-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 12h3l2-6 4 12 2-6h5"/>
+                                    </svg>
+                                </div>
+                                <span class="card-tag tag-first">首发落地</span>
+                                <h4>01 疲劳｜工业预警</h4>
+                                <ul style="color: var(--node-fatigue);">
+                                    <li>高风险作业预警</li>
+                                    <li>注意力 / 微睡眠识别</li>
+                                    <li>个体化疲劳阈值</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App 2: Sleep -->
+                    <div class="app-block" style="border-top-color: var(--node-sleep);" id="app2">
+                        <div class="card-inner">
+                            <div class="card-text" style="color: var(--node-sleep);">
+                                <div class="state-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 14.5A7.5 7.5 0 1 1 9.5 3a6 6 0 1 0 11.5 11.5Z"/>
+                                    </svg>
+                                </div>
+                                <span class="card-tag tag-verify">闭环验证</span>
+                                <h4>02 睡眠｜睡眠改善</h4>
+                                <ul style="color: var(--node-sleep);">
+                                    <li>睡眠分期</li>
+                                    <li>结构优化</li>
+                                    <li>续夜反馈</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App 3: Anesthesia -->
+                    <div class="app-block medical-dim" style="border-top-color: var(--node-anesthesia);" id="app3">
+                        <div class="card-inner">
+                            <div class="card-text" style="color: var(--node-anesthesia);">
+                                <div class="state-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 3v18"/>
+                                        <path d="M5 8h14"/>
+                                        <path d="M7 8l2 10h6l2-10"/>
+                                    </svg>
+                                </div>
+                                <span class="card-tag tag-medical">注册后进入</span>
+                                <h4>03 麻醉｜麻醉监测</h4>
+                                <ul style="color: #B388FF;">
+                                    <li>麻醉深度监测</li>
+                                    <li>术中知晓预警</li>
+                                    <li>闭环靶控麻醉</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App 4: Coma -->
+                    <div class="app-block medical-dim" style="border-top-color: var(--node-coma);" id="app4">
+                        <div class="card-inner">
+                            <div class="card-text" style="color: var(--node-coma);">
+                                <div class="state-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 12h3l2-4 4 8 3-6 2 2h4"/>
+                                        <path d="M4 18h16"/>
+                                    </svg>
+                                </div>
+                                <span class="card-tag tag-coma">临床延展</span>
+                                <h4>04 昏迷｜意识评估</h4>
+                                <ul style="color: #6E7CFF;">
+                                    <li>昏迷意识分级</li>
+                                    <li>隐匿意识检测</li>
+                                    <li>神经康复评估</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<script>
+        function drawFlowConnections() {
+            const svg = document.getElementById('flowSVG');
+            svg.innerHTML = '';
+
+            const decodeNode = document.getElementById('decodeNode');
+            const apps = [
+                document.getElementById('app1'),
+                document.getElementById('app2'),
+                document.getElementById('app3'),
+                document.getElementById('app4')
+            ];
+            const nodes = [
+                document.getElementById('node1'),
+                document.getElementById('node2'),
+                document.getElementById('node3'),
+                document.getElementById('node4'),
+                document.getElementById('node5')
+            ];
+            const colors = ['#00E676', '#00E5FF', '#2979FF', '#B388FF', '#3949AB'];
+            const appColors = ['#00E5FF', '#2979FF', '#4EA8DB', '#B388FF'];
+
+            const canvasRect = document.getElementById('slideCanvas').getBoundingClientRect();
+
+            const getPos = (el, xPct, yPct) => {
+                const rect = el.getBoundingClientRect();
+                return {
+                    x: rect.left - canvasRect.left + (rect.width * xPct),
+                    y: rect.top - canvasRect.top + (rect.height * yPct)
+                };
+            };
+
+            const decodeBottomEdge = getPos(decodeNode, 0.5, 1);
+            const decodeTopEdge = getPos(decodeNode, 0.5, 0);
+
+            // Spectrum (top) -> Decode (middle), flowing DOWNWARD
+            nodes.forEach((node, i) => {
+                const dot = node.querySelector('.dot');
+                const start = getPos(dot, 0.5, 0.5);
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                const d = `M ${start.x} ${start.y}
+                           C ${start.x} ${start.y + 80},
+                             ${decodeTopEdge.x} ${decodeTopEdge.y - 60},
+                             ${decodeTopEdge.x} ${decodeTopEdge.y}`;
+
+                path.setAttribute("d", d);
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", colors[i]);
+                path.setAttribute("stroke-width", "2");
+                path.setAttribute("class", "flow-path");
+                path.style.opacity = 0.5;
+                svg.appendChild(path);
+            });
+
+            // Decode (middle) -> Apps (bottom), flowing DOWNWARD
+            apps.forEach((app, i) => {
+                const end = getPos(app, 0.5, 0);
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                const d = `M ${decodeBottomEdge.x} ${decodeBottomEdge.y}
+                           C ${decodeBottomEdge.x} ${decodeBottomEdge.y + 40},
+                             ${end.x} ${end.y - 20},
+                             ${end.x} ${end.y - 5}`;
+
+                path.setAttribute("d", d);
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", appColors[i]);
+                path.setAttribute("stroke-width", "3");
+                path.setAttribute("class", "flow-path");
+                if (i === 3) {
+                    path.style.opacity = 0.25;
+                    path.setAttribute("stroke-dasharray", "4, 6");
+                } else {
+                    path.style.opacity = 0.8;
+                }
+                svg.appendChild(path);
+            });
+        }
+
+        function createEEGWaves() {
+            const svg = document.getElementById('eegCanvas');
+            const colors = ['rgba(0, 230, 118, 0.4)', 'rgba(0, 229, 255, 0.5)', 'rgba(179, 136, 255, 0.3)'];
+            const speeds = ['15s', '20s', '12s'];
+
+            const width = svg.parentNode.getBoundingClientRect().width;
+            if(width === 0) { setTimeout(createEEGWaves, 100); return; }
+            const height = 110;
+            const segments = Math.floor(width / 40);
+
+            for(let i=0; i<3; i++) {
+                let pathString = `M 0 ${height/2} `;
+                let x = 0;
+                let totalLen = 0;
+
+                for(let j=0; j<segments+2; j++) {
+                    const nextX = x + 40 + Math.random()*20;
+                    const cX1 = x + 15;
+                    const cY1 = height/2 + (Math.random()-0.5)*90 * (i===1?1.5:1);
+                    const cX2 = nextX - 15;
+                    const cY2 = height/2 + (Math.random()-0.5)*90 * (i===1?1.5:1);
+                    const y = height/2 + (Math.random()-0.5)*20;
+
+                    pathString += `C ${cX1} ${cY1}, ${cX2} ${cY2}, ${nextX} ${y} `;
+                    x = nextX;
+                    totalLen += 60;
+                }
+
+                pathString += `L ${width} ${height/2} `;
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", pathString);
+                path.setAttribute("stroke", colors[i]);
+                path.setAttribute("stroke-width", i===1 ? "3" : "2");
+                path.setAttribute("class", "wave-path");
+                path.style.setProperty('--dash-len', totalLen * 2);
+                path.style.setProperty('--speed', speeds[i]);
+
+                path.style.strokeDasharray = (totalLen/8) + ' ' + (totalLen/10);
+
+                svg.appendChild(path);
+            }
+        }
+
+        window.addEventListener('resize', drawFlowConnections);
+
+        setTimeout(() => {
+            createEEGWaves();
+            drawFlowConnections();
+        }, 300);
+    </script>
+
+</body>
+</html>
+
+</template>
+<script>
+  const slides = [...document.querySelectorAll('template[data-label]')];
+  const TOTAL = slides.length;
+  const frame = document.getElementById('frame');
+  const dotsWrap = document.getElementById('dots');
+  const pageInd = document.getElementById('pageInd');
+  let cur = -1;
+  let buildStep = 0;
+  for (let i=0; i<TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.dataset.i = i;
+    d.onclick = () => go(i);
+    dotsWrap.appendChild(d);
+  }
+  const dots = [...dotsWrap.children];
+  const STANDARD_CHROME_CSS = `<style>
+    .slide-canvas, .slide { padding-top:30px !important; padding-left:40px !important; padding-right:40px !important; }
+    .top-logo { width:210px !important; top:8px !important; right:12px !important; left:auto !important; }
+    .header, .header-area { padding-right:225px !important; }
+  </style>`;
+  function render(i) {
+    const tpl = slides[i];
+    if (!tpl) return;
+    buildStep = 0;
+    let slideDoc = tpl.innerHTML;
+    if (tpl.dataset.standardChrome === 'true') slideDoc = slideDoc.replace('</head>', STANDARD_CHROME_CSS + '</head>');
+    frame.removeAttribute('src');
+    frame.srcdoc = slideDoc;
+    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+    pageInd.textContent = String(i+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+    cur = i;
+  }
+  function sendBuildStep() {
+    if (!frame.contentWindow || cur < 0) return;
+    frame.contentWindow.postMessage({ type:'set_build', step:buildStep }, '*');
+  }
+  frame.addEventListener('load', sendBuildStep);
+  function advance() {
+    const limit = Number(slides[cur]?.dataset.buildLimit || 0);
+    if (buildStep < limit) { buildStep += 1; sendBuildStep(); return; }
+    go(cur + 1);
+  }
+  function retreat() {
+    const limit = Number(slides[cur]?.dataset.buildLimit || 0);
+    if (limit && buildStep > 0) { buildStep -= 1; sendBuildStep(); return; }
+    go(cur - 1);
+  }
+  function go(i) {
+    if (i < 0 || i >= TOTAL || i === cur) return;
+    frame.classList.add('fading');
+    setTimeout(() => { render(i); frame.classList.remove('fading'); }, 180);
+  }
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); advance(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); retreat(); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(TOTAL-1);
+  });
+  let wheelLock = 0;
+  window.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    if (e.deltaY > 0) advance(); else retreat();
+  }, { passive:true });
+  window.addEventListener('message', ev => {
+    const m = ev.data; if (!m || typeof m !== 'object') return;
+    if (m.type === 'nav_keydown') {
+      if (m.key === 'ArrowRight' || m.key === ' ' || m.key === 'PageDown') advance();
+      else if (m.key === 'ArrowLeft' || m.key === 'PageUp') retreat();
+    } else if (m.type === 'nav_wheel') {
+      if (m.deltaY > 0) advance(); else retreat();
+    }
+  });
+  document.getElementById('tapLeft').addEventListener('click', retreat);
+  document.getElementById('tapRight').addEventListener('click', advance);
+  function fitFrame() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    frame.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fitFrame);
+  fitFrame();
+  render(0);
+</script>
+</body>
+</html>
